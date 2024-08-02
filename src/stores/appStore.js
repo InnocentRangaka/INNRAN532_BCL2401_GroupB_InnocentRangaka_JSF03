@@ -7,7 +7,7 @@ export const useAppStore = defineStore('appStore', {
   state: () => ({
     products: [],
     originalProducts: [],
-    categories: [],
+    categories: [''],
     filterItem: 'All categories',
     loading: false,
     error: null,
@@ -83,5 +83,67 @@ export const useAppStore = defineStore('appStore', {
       // Implement search logic here
     }
   },
-  getters: {},
+  getters: {
+    getCategories: (state) => {
+      return state.categories;
+    },
+    getProductsByCategory: (state) => (category) => {
+      return state.products.filter((product) => product.category === category);
+    },
+    getProducts: (state) => {
+      if (state.filterItem === 'All categories') {
+        return state.products;
+      } else {
+        return state.products.filter((product) => product.category === state.filterItem);
+      }
+    },
+    getOriginalProducts: (state) => {
+      return state.originalProducts;
+    },
+    getSingleProduct: (state) => {
+      return state.products;
+    },
+    getCart: (state) => {
+      return state.cart;
+    },
+    // getCart: (state) => {
+    //   return state.products.filter((product) => state.cart[product.id]);
+    // },
+    getCartTotal: (state) => {
+      return state.cart.totalItems;
+    },
+    getCartTotalPrice: (state) => {
+      return state.cart.totalPrice;
+    },
+    getFavourites: (state) => {
+      return state.products.filter((product) => state.wishList[product.id]);
+    },
+    getWishList: (state) => {
+      return state.wishList;
+    },
+    getWishListTotal: (state) => {
+      return state.wishList.totalItems;
+    },
+    getWishListTotalPrice: (state) => {
+      return state.wishList.totalPrice;
+    },
+    getLoading: (state) => {
+      return state.loading;
+    },
+    getError: (state) => {
+      return state.error;
+    },
+    getPageLoading: (state) => {
+      return state.pageLoading;
+    },
+    getPages: (state) => {
+      return state.pages;
+    },
+    getCurrentLocation: (state) => {
+      return state.currentLocation;
+    },
+    getPageName: (state) => {
+      return state.pageName;
+    },
+  },
 });

@@ -4,7 +4,7 @@ import { useAppStore } from '../stores/appStore'
 import { useRouter } from 'vue-router'
 
 const appStore = useAppStore()
-const { app, initializeCategories } = appStore
+const { app, fetchCategories } = appStore
 const categories = ref([])
 const wishListItems = ref(0)
 const cartTotalItems = ref(0)
@@ -24,11 +24,11 @@ const menuName = (category) => {
 
 const capitalizeMenuName = (name) => name.charAt(0).toUpperCase() + name.slice(1)
 
-onMounted(() => {
-  initializeCategories()
-  categories.value = app.categories
-  wishListItems.value = Object.values(app.wishList).length
-  cartTotalItems.value = app.cart.totalItems
+onMounted(async () => {
+  await fetchCategories(appStore)
+  categories.value = appStore?.categories
+  wishListItems.value = appStore?.wishList && Object.values(appStore?.wishList)?.length
+  cartTotalItems.value = appStore?.cart?.totalItems
 })
 </script>
 
@@ -78,6 +78,11 @@ onMounted(() => {
             :aria-expanded="mobileMenuOpen"
           >
             <span class="sr-only">Open main menu</span>
+            <div v-if="cartTotalItems" class="t-0 absolute left-3 -top-4">
+              <p
+                class="flex h-2 w-2 items-center justify-center rounded-full bg-red-500 p-3 text-xs text-white"
+              ></p>
+            </div>
             <svg
               class="w-5 h-5"
               xmlns="http://www.w3.org/2000/svg"

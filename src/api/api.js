@@ -23,18 +23,18 @@ export const fetchCategories = async (app) => {
   watchEffect(() => {
     if (!fetching.value) {
       if (error.value) {
-        app.error = {
-          status: error.value.response.status,
+        app.setError({
+          status: error.status,
           message: 'Data fetching failed :( , please check your network connection and reload.',
           type: 'network/fetch',
-        }
+        })
 
         return;
       }
       
       if (data.value) {
-        app.categories = data.value
-        app.loading = false
+        app.setCategories(data.value)
+        app.setLoading(false)
       }
     }
   })
@@ -87,11 +87,11 @@ export const fetchCategories = async (app) => {
     watchEffect(() => {
       if(!fetching.value){
         if(error.value) {
-          app.error = {
+          app.setError({
             status: error.status,
             message: 'Data fetching failed :( , please check your network connection and reload.',
             type: 'network/fetch',
-          };
+          });
     
           console.log('Error', error.value)
     
@@ -99,9 +99,9 @@ export const fetchCategories = async (app) => {
         }
         
         if(data.value){
-          app.products = data.value;
-          app.originalProducts = JSON.parse(JSON.stringify(data.value));
-          app.loading = false;
+          app.setProducts(data.value);
+          app.setOriginalProducts(JSON.parse(JSON.stringify(data.value)));
+          app.setLoading(false);
     
           // console.log('Data', app.products)
     

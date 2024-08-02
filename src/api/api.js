@@ -34,7 +34,7 @@ export const fetchCategories = async (app) => {
       
       if (data.value) {
         app.setCategories(data.value)
-        app.setLoading(false)
+        // app.setLoading(false)
       }
     }
   })
@@ -47,24 +47,37 @@ export const fetchCategories = async (app) => {
    * @param {number} id - The ID of the product to fetch.
    * @returns {Promise<{response: Object, error: null} | {error: any, response: null}>} An object containing the product data or an error.
    */
-  export const fetchSingleProduct = async (id) => {
-    try {
-      const response = await fetch(`${API_URL}products/${id}`);
-      if (!response.ok) {
-        throw response;
-      }
-  
-      const text = await response.text();
-  
-      if (!text) {
-        return { response: null, error: null };
-      }
-  
-      const parsedData = JSON.parse(text);
-      return { response: parsedData, error: null };
-    } catch (error) {
-      return { error: error, response: null };
+  export const fetchSingleProduct = async (app) => {
+    app.setProductsLoading(true);
+
+    const { data, error, fetching } = await useFetch(`/${id}`);
+    while (fetching.value) {
+      await new Promise((resolve) => setTimeout(resolve, 100));
     }
+  
+    watchEffect(() => {
+      if (!fetching.value) {
+        if (error.value) {
+          app.setError({
+            status: error.status,
+            message: 'Data fetching failed :( , please check your network connection and reload.',
+            type: 'network/fetch',
+          })
+  
+          return;
+        }
+        
+        if (data.value) {
+          app.setProducts(data.value);
+          app.setProductsLoading(false);
+          setTimeout(() => {
+            app.setPageLoading(false);
+          }, 1000);
+        }
+      }
+    })
+  
+    return {data, error, fetching };
   };
   
   /**
@@ -73,7 +86,7 @@ export const fetchCategories = async (app) => {
    * @returns {Promise<void>} Updates the application state with fetched products and handles loading state.
    */
   export const fetchProducts = async (app) => {
-    app.loading = true;
+    app.setProductsLoading(true);
 
     const url = app.filterItem !== 'All categories' 
       ? `/category/${this.filterItem}`
@@ -93,7 +106,7 @@ export const fetchCategories = async (app) => {
             type: 'network/fetch',
           });
     
-          console.log('Error', error.value)
+          // console.log('Error', error.value)
     
           return;
         }
@@ -101,15 +114,15 @@ export const fetchCategories = async (app) => {
         if(data.value){
           app.setProducts(data.value);
           app.setOriginalProducts(JSON.parse(JSON.stringify(data.value)));
-          app.setLoading(false);
+          // app.setProductsLoading(false);
     
           // console.log('Data', app.products)
     
           app.sortProducts();
           app.searchProducts();
-          setTimeout(() => {
-            app.pageLoading = false;
-          }, 1000);
+          // setTimeout(() => {
+          //   app.setPageLoading(false);
+          // }, 1000);
         }
       }
     })

@@ -5,22 +5,84 @@ import { fetchCategories, fetchSingleProduct, fetchProducts } from '../api/api';
 
 export const useAppStore = defineStore('appStore', {
   state: () => ({
-    products: [],
-    originalProducts: [],
+    currency: '$',
     categories: [''],
     filterItem: 'All categories',
-    loading: false,
-    error: null,
-    pageLoading: false,
-    pages: {
-      productPages: [],
-      authPages: [],
-      cartPages: [],
+
+    // Products and loading state
+    viewProduct: [],
+    products: [],
+    originalProducts: [],
+    selectedProduct: {},
+    loading: {
+      products: true,
+      cart: false,
+      page: true,
     },
-    currentLocation: '',
+    error: null,
+    pageLoading: true,
+
+    // Sorting and filtering
+    sorting: 'default',
+    searchTerm: '',
+    filterItem: 'All categories',
+    categories: [],
+
+    // UI state
+    dropdownOpen: false,
+    disabledClass: 'disabled:opacity-75',
+    cursorPointerClass: 'cursor-pointer',
+    cursorNotAllowed: 'cursor-not-allowed',
+
+    // Cart management
+    cart: {
+      isAddingToCart: false,
+      addToCartText: 'Add To Cart',
+      shippingRate: 0,
+      shippingMethod: 'standard',
+      cartItems: {},
+      totalItems: 0, 
+      subTotalAmount: 0, 
+      taxAmount: 0,
+      totalAmount: 0,
+    },
+
+    // Wishlist management
+    wishList: {},
+
+    // Page navigation
+    pageName: null,
+    pages: {
+      productPages: ['home', 'wishlist', 'products', 'product'],
+      authPages: ['login', 'signup'],
+      cartPages: ['cart', 'checkout'],
+    },
+
+    currentLocation: {
+      path: '',
+      params: '',
+      query: '',
+      route: '',
+      userData: '',
+      componentName: '',
+    },
     pageName: '',
+
+    // Toast
+    /**
+     * Toast object.
+     */
+    toast: {
+      visible: false, // Flag indicating toast visibility.
+      delay: 5000, // Toast delay.
+      percent: 0, // Toast progress percentage.
+      interval: null, // Toast interval.
+      message: null, // Toast message.
+      display: null, // Toast display component.
+    },
   }),
   actions: {
+    formatPrice: (price) => price.toFixed(2),
     setCategories(categories) {
       this.categories = categories;
     },
@@ -30,8 +92,14 @@ export const useAppStore = defineStore('appStore', {
     setOriginalProducts(originalProducts) {
       this.originalProducts = originalProducts;
     },
+    setViewProduct(product) {
+      this.viewProduct = product;
+    },
     setLoading(loading) {
       this.loading = loading;
+    },
+    setProductsLoading(loading) {
+      this.loading.products = loading;
     },
     setError(error) {
       this.error = error;
@@ -81,7 +149,44 @@ export const useAppStore = defineStore('appStore', {
     },
     searchProducts() {
       // Implement search logic here
-    }
+    },
+    showToast(message) {
+      this.toastMessage = message;
+      setTimeout(() => {
+        this.toastMessage = '';
+      }, 3000);
+    },
+    addToCart(item, eventTarget = null) {
+      const newCartItems = { ...this.cart.cartItems };
+      if (newCartItems[item.id]) {
+        newCartItems[item.id].quantity += 1;
+        newCartItems[item.id].totalPrice = newCartItems[item.id].quantity * item.price;
+      } else {
+        const hasQuantity = item.quantity ? item.quantity : 1;
+        newCartItems[item.id] = { 
+          ...item, 
+          quantity: hasQuantity, 
+          totalPrice: item.price,
+          quantityUpdating: false,
+          removeItem: false,
+        };
+      }
+      const cartTotalItems = Object.keys(newCartItems).length;
+      const cartSubTotalAmount = calculateSubTotalAmount(newCartItems);
+      const cartTaxAmount = calculateTaxAmount(newCartItems);
+      const cartTotalAmount = calculateCartTotal(newCartItems);
+
+      this.showToast('Product added to cart!');
+
+      this.cart = { 
+        ...this.cart,
+        cartItems: newCartItems,
+        totalItems: cartTotalItems,
+        subTotalAmount: cartSubTotalAmount,
+        taxAmount: cartTaxAmount,
+        totalAmount: cartTotalAmount,
+      };
+    },
   },
   getters: {
     getCategories: (state) => {
@@ -120,6 +225,9 @@ export const useAppStore = defineStore('appStore', {
     },
     getWishList: (state) => {
       return state.wishList;
+    },
+    isInWishList: (state) => (id) => {
+      return () => state.wishList.hasOwnProperty(id);
     },
     getWishListTotal: (state) => {
       return state.wishList.totalItems;

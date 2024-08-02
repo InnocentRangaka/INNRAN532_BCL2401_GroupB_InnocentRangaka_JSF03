@@ -1,60 +1,37 @@
 <script setup>
-import { reactive, computed, onMounted, nextTick } from 'vue'
-import { useStore } from '../store/store'
+import { watchEffect, ref, onMounted, nextTick } from 'vue'
+import { useAppStore } from '../stores/appStore'
 import RatingStars from './RatingStars.vue'
 import { useRoute, useRouter } from 'vue-router'
 
-const store = useStore()
+const appStore = useAppStore()
 const route = useRoute()
 const router = useRouter()
 
-const app = reactive({
-  products: [],
-  currency: '$',
-  cart: {},
-  modal: {},
-  loading: false
-})
-
-// Subscribe to store updates
-store.$subscribe((mutation, state) => {
-  app.products = state.products
-  app.currency = state.currency
-  app.cart = state.cart
-  app.modal = state.modal
-})
-
-const isInWishList = (productId) => {
-  // Implement your logic to check if the product is in the wishlist
-}
-
-const addToCart = (product) => {
-  // Implement your logic to add the product to the cart
-}
-
-const addToFavourites = (productId) => {
-  // Implement your logic to add the product to favourites
-}
+const { isInWishList, addToCart } = appStore
 
 // Fetch products on mount
 onMounted(async () => {
-  await store.fetchProducts()
-  app.loading = false
+  ;() => appStore.getProducts
+  setTimeout(() => {
+    appStore.setProductsLoading(false)
+  }, 1000)
 })
 
-// Recompute products after each update
-nextTick(() => {
-  // Your logic after each update
+watchEffect(() => {
+  ;() => {
+    appStore.getProducts
+  }
 })
 </script>
 
 <template>
   <div
-    v-if="products"
+    v-show="!appStore.loading.products"
     class="container lg:max-h-[130rem] mx-auto grid gap-4 grid-cols-1 lg:grid-cols-4 md:grid-cols-2 items-center lg:max-w-none my-4 px-2 md:px-0"
   >
     <div
-      v-for="product in products"
+      v-for="product in appStore.getProducts"
       :key="product.id"
       class="flex flex-col max-h-[130rem] max-w-80 hover:-translate-y-1 hover:scale-105 duration-300 bg-white border border-slate-200 shadow shadow-slate-950/5 rounded-2xl overflow-hidden"
     >
@@ -82,7 +59,7 @@ nextTick(() => {
             <RatingStars :ratingNumber="product.rating.rate" />
           </div>
           <div class="text-base line-clamp-2 font-extrabold text-slate-500 leading-snug">
-            <h2>{{ currency }} {{ product.price }}</h2>
+            <h2>{{ appStore.currency }} {{ product.price }}</h2>
           </div>
         </div>
         <div class="flex mt-1 space-x-2 place-items-center">
@@ -95,6 +72,7 @@ nextTick(() => {
           </div>
           <div class="flex justify-end space-x-2 place-items-center items-center">
             <button
+              class="bg-transparent"
               :class="isInWishList(product.id) ? 'cursor-pointer text-red-500' : 'cursor-pointer'"
               @click="addToFavourites(product.id)"
             >
@@ -122,7 +100,7 @@ nextTick(() => {
               @click="addToCart(product)"
               class="cursor-pointer inline-flex justify-center whitespace-nowrap rounded-lg bg-cyan-700 px-3 py-2 text-sm font-medium text-white hover:bg-cyan-900 focus-visible:outline-none focus-visible:ring focus-visible:ring-indigo-300 transition-colors"
             >
-              {{ cart.addToCartText }}
+              {{ appStore.cart.addToCartText }}
             </button>
           </div>
         </div>

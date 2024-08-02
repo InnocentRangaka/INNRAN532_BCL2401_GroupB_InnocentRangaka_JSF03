@@ -21,7 +21,7 @@ const isTopPartShown = () => {
 
 onMounted(() => {
   isTopPartShown()
-  fetchProducts()
+  //   fetchProducts()
   fetchCategories()
 })
 

@@ -5,13 +5,13 @@
 }
 
 body {
-  /* background-color: #caf0f8; */
+  background-color: #caf0f8;
 }
 
 .page-content {
   min-height: calc(100svh * 0.4557);
-  height: 100%;
   height: -webkit-fill-available;
+  height: 100%;
 }
 
 #app {
@@ -21,21 +21,21 @@ body {
   font-weight: normal;
 }
 
-a,
+/* a,
 .green {
   text-decoration: none;
   color: hsla(160, 100%, 37%, 1);
   transition: 0.4s;
   padding: 3px;
-}
+} */
 
 @media (hover: hover) {
-  a:hover {
+  /* a:hover {
     background-color: hsla(160, 100%, 37%, 0.2);
-  }
+  } */
 }
 
-button {
+button.btn-theme {
   border-radius: 8px;
   border: 1px solid transparent;
   padding: 0.6em 1.2em;
@@ -46,11 +46,11 @@ button {
   cursor: pointer;
   transition: border-color 0.25s;
 }
-button:hover {
+button.btn-theme:hover {
   border-color: #646cff;
 }
-button:focus,
-button:focus-visible {
+button.btn-theme:focus,
+button.btn-theme:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 

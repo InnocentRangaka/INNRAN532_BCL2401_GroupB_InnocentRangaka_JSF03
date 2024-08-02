@@ -22,6 +22,28 @@ import HelloWorld from './components/HelloWorld.vue'
   </header>
 
   <RouterView />
+
+  <h1>Home</h1>
+  <div>
+    <button @click="getCategories">Fetch Categories</button>
+    <button @click="getProducts">Fetch Products</button>
+    <button @click="fetchFavourites({ 1: '1', 2: '2' })">Fetch Favourites</button>
+
+    <div v-if="loading">Loading...</div>
+    <div v-if="error">{{ error.message }}</div>
+    <div>
+      <h1 class="text-grey-900">Categories</h1>
+      <ul>
+        <li v-for="category in appStore.getCategories" :key="category">{{ category }}</li>
+      </ul>
+    </div>
+    <div>
+      <h1 class="text-grey-900">Products</h1>
+      <ul>
+        <li v-for="product in appStore.products" :key="product.id">{{ product.title }}</li>
+      </ul>
+    </div>
+  </div>
 </template>
 
 <style scoped>

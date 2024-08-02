@@ -89,7 +89,7 @@ export const fetchCategories = async (app) => {
     app.setProductsLoading(true);
 
     const url = app.filterItem !== 'All categories' 
-      ? `/category/${this.filterItem}`
+      ? `/category/${app.filterItem}`
       : `/`;
 
     const { data, error, fetching } = await useFetch(url);

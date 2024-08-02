@@ -144,6 +144,9 @@ export const useAppStore = defineStore('appStore', {
         }, 1000);
       }
     },
+    setFilterItem(term){
+      this.filterItem = term;
+    },
     sortProducts() {
       // Implement sorting logic here
     },
@@ -191,6 +194,11 @@ export const useAppStore = defineStore('appStore', {
   getters: {
     getCategories: (state) => {
       return state.categories;
+    },
+    getCategory: (state) => (urlCategory) => {
+      return state.getCategories
+        ? state.getCategories.find((categoryName) => categoryName.startsWith(urlCategory))
+        : undefined
     },
     getProductsByCategory: (state) => (category) => {
       return state.products.filter((product) => product.category === category);

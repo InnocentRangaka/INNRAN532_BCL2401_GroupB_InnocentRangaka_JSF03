@@ -1,38 +1,63 @@
 <script setup>
 import { watchEffect, ref, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { useAppStore } from '../stores/appStore'
 import ProductCards from '../components/ProductCards.vue'
 import ProductCardSkeleton from '../components/ProductCardSkeleton.vue'
 
 const appStore = useAppStore()
-const { fetchProducts, getCategories, categories, products, loading, error, setPageLoading } =
-  appStore
+const {
+  fetchProducts,
+  setFilterItem,
+  getCategories,
+  categories,
+  products,
+  loading,
+  error,
+  setPageLoading
+} = appStore
+
+// Using vue-router hooks
+const route = useRoute()
+const router = useRouter()
+
+// console.log(route)
 
 let homeProducts = ref(products)
 let productsLoading = ref(loading.products)
-
-let getLocation = window.location.href
-  .replace(window.location.origin, '')
-  .replace(window.location.pathname, '')
-let categoryParams = app.currentLocation?.params?.category
-let categoryPath = app.currentLocation?.path.replace('/products/category/', '')
 
 const isHomePageShown = () => {
   // Logic to determine if the home page is shown based on the current location
 }
 
-onMounted(async () => {
+const getHomeProducts = () => {
+  const path = route.path,
+    query = route.query
+
+  // console.log(Object.values(query).length)
+
+  if (Object.values(query).length === 0) {
+    setFilterItem('All categories')
+  }
   fetchProducts()
+}
+
+onMounted(async () => {
+  getHomeProducts()
   setTimeout(() => {
-    // appStore.setPageLoading(false)
+    if (appStore.loading.products) {
+      appStore.setProductsLoading(false)
+    }
     // appStore.setProductsLoading(false)
-  }, 1000)
+  }, 1200)
 })
 
 // console.log(getCategories)
 
 watchEffect(() => {
-  ;() => homeProducts, () => productsLoading
+  homeProducts
+  productsLoading = appStore.loading.products
+  appStore.products
 })
 </script>
 

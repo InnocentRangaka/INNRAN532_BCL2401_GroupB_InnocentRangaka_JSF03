@@ -5,7 +5,6 @@ import { fetchCategories, fetchSingleProduct, fetchProducts } from '../api/api';
 
 export const useAppStore = defineStore('appStore', {
   state: () => ({
-    currency: '$',
     categories: [''],
     filterItem: 'All categories',
 
@@ -35,6 +34,7 @@ export const useAppStore = defineStore('appStore', {
     cursorNotAllowed: 'cursor-not-allowed',
 
     // Cart management
+    currency: '$',
     cart: {
       isAddingToCart: false,
       addToCartText: 'Add To Cart',
@@ -111,7 +111,7 @@ export const useAppStore = defineStore('appStore', {
         await fetchCategories(this);
     },
     async fetchSingleProduct(id) {
-        await fetchSingleProduct(id);
+        await fetchSingleProduct(id, this);
     },
     async fetchProducts() {
         await fetchProducts(this);
@@ -214,7 +214,7 @@ export const useAppStore = defineStore('appStore', {
       return state.originalProducts;
     },
     getSingleProduct: (state) => {
-      return state.products;
+      return state.viewProduct;
     },
     getCart: (state) => {
       return state.cart;

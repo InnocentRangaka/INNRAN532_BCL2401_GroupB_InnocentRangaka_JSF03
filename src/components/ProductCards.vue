@@ -8,20 +8,23 @@ const appStore = useAppStore()
 const route = useRoute()
 const router = useRouter()
 
-const { isInWishList, addToCart } = appStore
+const { isInWishList, addToCart, getProducts, products } = appStore
+
+let currentProducts = ref(appStore.products)
 
 // Fetch products on mount
 onMounted(async () => {
-  ;() => appStore.getProducts
+  currentProducts = appStore.products
   setTimeout(() => {
-    appStore.setProductsLoading(false)
+    // appStore.setProductsLoading(false)
+    // console.log(currentProducts.value, getProducts, appStore.products)
   }, 1000)
 })
 
 watchEffect(() => {
-  ;() => {
-    appStore.getProducts
-  }
+  currentProducts = appStore.products
+  appStore.getProducts
+  appStore.products
 })
 </script>
 

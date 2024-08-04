@@ -47,7 +47,8 @@ export const fetchCategories = async (app) => {
    * @param {number} id - The ID of the product to fetch.
    * @returns {Promise<{response: Object, error: null} | {error: any, response: null}>} An object containing the product data or an error.
    */
-  export const fetchSingleProduct = async (app) => {
+  export const fetchSingleProduct = async (id, app) => {
+    app.setViewProduct([]);
     app.setProductsLoading(true);
 
     const { data, error, fetching } = await useFetch(`/${id}`);
@@ -68,7 +69,8 @@ export const fetchCategories = async (app) => {
         }
         
         if (data.value) {
-          app.setProducts(data.value);
+          // console.log(data.value)
+          app.setViewProduct(data.value);
           app.setProductsLoading(false);
           setTimeout(() => {
             app.setPageLoading(false);

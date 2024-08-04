@@ -9,14 +9,23 @@ import HamburgerIcon from '../icons/HamburgerIcon.vue'
 const router = useRouter()
 const appStore = useAppStore()
 
-const { app, fetchCategories } = appStore
+const { fetchCategories } = appStore
 
 const categories = ref([])
 const wishListItems = ref(0)
 const cartTotalItems = ref(0)
 const mobileMenuOpen = ref(false)
 
-const pageName = computed(() => router.currentRoute.value.name)
+let pageName = computed(() => router.currentRoute.value.name)
+const isActivePage = (name) => {
+  const routeName = pageName?.value
+  let page = routeName?.toLowerCase()
+  if (routeName == 'Products') {
+    page = router.currentRoute?.value?.params?.category
+  }
+
+  return page == name
+}
 
 const toggleMobileMenu = () => {
   mobileMenuOpen.value = !mobileMenuOpen.value
@@ -55,7 +64,10 @@ onMounted(async () => {
           <router-link
             v-if="categories.length > 0"
             to="/"
-            :class="{ 'text-cyan-700': pageName === 'home', 'text-gray-700': pageName !== 'home' }"
+            :class="{
+              'text-cyan-700': isActivePage('home'),
+              'text-gray-700': !isActivePage('home')
+            }"
             class="font-medium md:hover:text-blue-700"
           >
             All
@@ -65,8 +77,8 @@ onMounted(async () => {
             :key="category"
             :to="`/products/category/${menuName(category)}`"
             :class="{
-              'text-cyan-700': pageName === menuName(category),
-              'text-gray-700': pageName !== menuName(category)
+              'text-cyan-700': isActivePage(menuName(category)),
+              'text-gray-700': !isActivePage(menuName(category))
             }"
             class="font-medium md:hover:text-blue-700"
           >
@@ -101,8 +113,8 @@ onMounted(async () => {
                   <router-link
                     to="/wishlist"
                     :class="{
-                      'text-cyan-700': pageName === 'wishlist',
-                      'text-gray-700': pageName !== 'wishlist'
+                      'text-cyan-700': isActivePage('wishlist'),
+                      'text-gray-700': !isActivePage('wishlist')
                     }"
                     class="group hover:bg-gray-100 md:hover:bg-transparent"
                   >
@@ -114,7 +126,7 @@ onMounted(async () => {
                           {{ wishListItems }}
                         </p>
                       </div>
-                      <HeartIcon pageName />
+                      <HeartIcon :wishlistpagename="pageName" />
                     </div>
                   </router-link>
                 </li>
@@ -122,8 +134,8 @@ onMounted(async () => {
                   <router-link
                     to="/cart"
                     :class="{
-                      'text-cyan-700': pageName === 'cart',
-                      'text-gray-700': pageName !== 'cart'
+                      'text-cyan-700': isActivePage('cart'),
+                      'text-gray-700': !isActivePage('cart')
                     }"
                     class="group hover:bg-gray-100 md:hover:bg-transparent"
                   >
@@ -143,8 +155,8 @@ onMounted(async () => {
                   <router-link
                     to="/auth/login"
                     :class="{
-                      'text-cyan-700': pageName === 'login',
-                      'text-gray-700': pageName !== 'login'
+                      'text-cyan-700': isActivePage('login'),
+                      'text-gray-700': isActivePage('login')
                     }"
                     class="block py-2 px-3 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0"
                   >
@@ -167,8 +179,8 @@ onMounted(async () => {
             <router-link
               :to="`/products/category/${menuName(category)}`"
               :class="{
-                'text-cyan-700': pageName === menuName(category),
-                'text-gray-700': pageName !== menuName(category)
+                'text-cyan-700': isActivePage(menuName(category)),
+                'text-gray-700': !isActivePage(menuName(category))
               }"
               class="block py-2 px-3 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0"
             >
@@ -209,8 +221,8 @@ onMounted(async () => {
             <router-link
               to="/auth/login"
               :class="{
-                'text-cyan-700': pageName === 'login',
-                'text-gray-700': pageName !== 'login'
+                'text-cyan-700': isActivePage('login'),
+                'text-gray-700': isActivePage('login')
               }"
               class="block py-2 px-3 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0"
             >

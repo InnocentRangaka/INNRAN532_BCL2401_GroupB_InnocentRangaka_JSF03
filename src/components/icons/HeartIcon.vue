@@ -1,22 +1,24 @@
 <script setup>
 import { defineProps } from 'vue'
 
-// Define the `pageName` prop
+// Define the `wishlistpagename` prop
 const props = defineProps({
-  pageName: {
+  wishlistpagename: {
     type: String,
     required: false
   }
 })
 
-const pageName = props.pageName
+console.log(props.wishlistpagename)
+
+const pageName = props?.wishlistpagename?.toLowerCase()
 </script>
 
 <template>
   <svg
     class="h-6 w-6 group-hover:bg-gray-100 md:group-hover:stroke-blue-700 cursor-pointer"
     :class="{
-      'stroke-cyan-700': pageName === 'wishlist',
+      'stroke-cyan-700': pageName == 'wishlist',
       'stroke-gray-700': pageName !== 'wishlist'
     }"
     aria-hidden="true"

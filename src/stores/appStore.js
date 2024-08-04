@@ -2,6 +2,7 @@
 import { defineStore } from 'pinia';
 import axios from 'axios';
 import { fetchCategories, fetchSingleProduct, fetchProducts } from '../api/api';
+import { calculateSubTotalAmount, calculateTaxAmount, calculateCartTotal } from '../utils/utils'
 
 export const useAppStore = defineStore('appStore', {
   state: () => ({
@@ -35,6 +36,12 @@ export const useAppStore = defineStore('appStore', {
 
     // Cart management
     currency: '$',
+    taxRate: Number(15),
+    shippingRate: 0,
+    shippingCost: {
+      standard: Number(5),
+      express: Number(16.00)
+    },
     cart: {
       isAddingToCart: false,
       addToCartText: 'Add To Cart',
@@ -176,8 +183,8 @@ export const useAppStore = defineStore('appStore', {
       }
       const cartTotalItems = Object.keys(newCartItems).length;
       const cartSubTotalAmount = calculateSubTotalAmount(newCartItems);
-      const cartTaxAmount = calculateTaxAmount(newCartItems);
-      const cartTotalAmount = calculateCartTotal(newCartItems);
+      const cartTaxAmount = calculateTaxAmount(newCartItems, this.taxRate);
+      const cartTotalAmount = calculateCartTotal(newCartItems, this.taxRate, this.shippingRate);
 
       this.showToast('Product added to cart!');
 
@@ -189,6 +196,8 @@ export const useAppStore = defineStore('appStore', {
         taxAmount: cartTaxAmount,
         totalAmount: cartTotalAmount,
       };
+
+      console.log(this.cart)
     },
   },
   getters: {

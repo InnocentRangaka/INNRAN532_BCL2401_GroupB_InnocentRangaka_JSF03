@@ -3,12 +3,11 @@ import { onMounted, ref, watch } from 'vue'
 import { useAppStore } from '../../stores/appStore'
 import SearchFilterSort from './SearchFilterSort.vue'
 import Footer from './Footer.vue'
-import Header from './Header.vue'
+import Header from './TopHeader.vue'
 import Toast from './Toast.vue'
 
 const appStore = useAppStore()
-const { fetchProducts, fetchCategories, fetchFavourites, loading, error, products, categories } =
-  appStore
+const { fetchCategories, error } = appStore
 
 const showTopPart = ref(true)
 

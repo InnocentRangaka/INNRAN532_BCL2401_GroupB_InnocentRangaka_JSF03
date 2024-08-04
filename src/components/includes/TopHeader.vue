@@ -126,7 +126,7 @@ onMounted(async () => {
                           {{ wishListItems }}
                         </p>
                       </div>
-                      <HeartIcon :wishlistpagename="pageName" />
+                      <HeartIcon />
                     </div>
                   </router-link>
                 </li>

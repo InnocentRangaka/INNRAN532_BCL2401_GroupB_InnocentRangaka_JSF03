@@ -6,8 +6,6 @@ import { calculateSubTotalAmount, calculateTaxAmount, calculateCartTotal } from 
 
 export const useAppStore = defineStore('appStore', {
   state: () => ({
-    categories: [''],
-    filterItem: 'All categories',
 
     // Products and loading state
     viewProduct: [],
@@ -72,8 +70,15 @@ export const useAppStore = defineStore('appStore', {
       route: '',
       userData: '',
       componentName: '',
+      previous: {
+        path: '',
+        params: '',
+        query: '',
+        route: '',
+        userData: '',
+        componentName: '',
+      }
     },
-    pageName: '',
 
     // Toast
     /**
@@ -244,7 +249,7 @@ export const useAppStore = defineStore('appStore', {
       return state.wishList;
     },
     isInWishList: (state) => (id) => {
-      return () => state.wishList.hasOwnProperty(id);
+      return Object.prototype.hasOwnProperty.call(state.wishList, id);
     },
     getWishListTotal: (state) => {
       return state.wishList.totalItems;

@@ -2,14 +2,19 @@
 import { ref, onMounted, computed } from 'vue'
 import { useAppStore } from '../stores/appStore'
 import { useRouter } from 'vue-router'
+import CartIcon from './icons/CartIcon.vue'
+import HeartIcon from './icons/HeartIcon.vue'
+import HamburgerIcon from './icons/HamburgerIcon.vue'
 
+const router = useRouter()
 const appStore = useAppStore()
+
 const { app, fetchCategories } = appStore
+
 const categories = ref([])
 const wishListItems = ref(0)
 const cartTotalItems = ref(0)
 const mobileMenuOpen = ref(false)
-const router = useRouter()
 
 const pageName = computed(() => router.currentRoute.value.name)
 
@@ -83,20 +88,7 @@ onMounted(async () => {
                 class="flex h-2 w-2 items-center justify-center rounded-full bg-red-500 p-3 text-xs text-white"
               ></p>
             </div>
-            <svg
-              class="w-5 h-5"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 17 14"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M1 1h15M1 7h15M1 13h15"
-              />
-            </svg>
+            <HamburgerIcon />
           </button>
 
           <!-- Desktop Menu -->
@@ -122,25 +114,7 @@ onMounted(async () => {
                           {{ wishListItems }}
                         </p>
                       </div>
-                      <svg
-                        class="h-6 w-6 group-hover:bg-gray-100 md:group-hover:stroke-blue-700 cursor-pointer"
-                        :class="{
-                          'stroke-cyan-700': pageName === 'wishlist',
-                          'stroke-gray-700': pageName !== 'wishlist'
-                        }"
-                        aria-hidden="true"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="1.5"
-                          d="M12.01 6.001C6.5 1 1 8 5.782 13.001L12.011 20l6.23-7C23 8 17.5 1 12.01 6.002Z"
-                        />
-                      </svg>
+                      <HeartIcon pageName />
                     </div>
                   </router-link>
                 </li>
@@ -161,20 +135,7 @@ onMounted(async () => {
                           {{ cartTotalItems }}
                         </p>
                       </div>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke-width="1.5"
-                        stroke="currentColor"
-                        class="h-6 w-6 group-hover:bg-gray-100 md:group-hover:stroke-blue-700 cursor-pointer"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"
-                        />
-                      </svg>
+                      <CartIcon />
                     </div>
                   </router-link>
                 </li>

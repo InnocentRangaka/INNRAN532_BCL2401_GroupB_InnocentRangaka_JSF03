@@ -1,8 +1,8 @@
 <script setup>
 import { watchEffect, ref, onMounted, nextTick } from 'vue'
-import { useAppStore } from '../stores/appStore'
-import RatingStars from './RatingStars.vue'
-import TopBackLink from './TopBackLink.vue'
+import { useAppStore } from '../../stores/appStore'
+import RatingStars from '../icons/RatingStars.vue'
+import TopBackLink from '../includes/TopBackLink.vue'
 import { useRoute, useRouter } from 'vue-router'
 
 const appStore = useAppStore()

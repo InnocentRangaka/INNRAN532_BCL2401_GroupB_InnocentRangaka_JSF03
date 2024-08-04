@@ -1,6 +1,6 @@
 <script setup>
 import { onMounted, ref, watch } from 'vue'
-import { useAppStore } from '../stores/appStore'
+import { useAppStore } from '../../stores/appStore'
 import SearchFilterSort from './SearchFilterSort.vue'
 import Footer from './Footer.vue'
 import Header from './Header.vue'
@@ -41,7 +41,7 @@ watch(
     <main>
       <div class="page-content">
         <!-- Search Filter Sort -->
-        <SearchFilterSort v-if="showTopPart" />
+        <SearchFilterSort v-show="showTopPart" />
 
         <!-- Error -->
         <div v-if="error" class="w-full flex justify-center">

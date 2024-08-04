@@ -2,7 +2,7 @@
 import { onMounted, ref, watch, nextTick } from 'vue'
 import { RouterLink, RouterView } from 'vue-router'
 import { useAppStore } from './stores/appStore'
-import Layout from './components/Layout.vue'
+import Layout from './components/includes/Layout.vue'
 
 const appStore = useAppStore()
 // const app = store;

@@ -1,10 +1,10 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
-import { useAppStore } from '../stores/appStore'
+import { useAppStore } from '../../stores/appStore'
 import { useRouter } from 'vue-router'
-import CartIcon from './icons/CartIcon.vue'
-import HeartIcon from './icons/HeartIcon.vue'
-import HamburgerIcon from './icons/HamburgerIcon.vue'
+import CartIcon from '../icons/CartIcon.vue'
+import HeartIcon from '../icons/HeartIcon.vue'
+import HamburgerIcon from '../icons/HamburgerIcon.vue'
 
 const router = useRouter()
 const appStore = useAppStore()

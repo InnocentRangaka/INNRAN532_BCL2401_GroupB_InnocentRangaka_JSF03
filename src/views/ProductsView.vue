@@ -2,8 +2,8 @@
 import { watch, ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAppStore } from '../stores/appStore'
-import ProductCards from '../components/ProductCards.vue'
-import ProductCardSkeleton from '../components/ProductCardSkeleton.vue'
+import ProductCards from '../components/products/ProductCards.vue'
+import ProductCardSkeleton from '../components/products/ProductCardSkeleton.vue'
 import { fetchProducts } from '../api/api'
 
 const appStore = useAppStore()

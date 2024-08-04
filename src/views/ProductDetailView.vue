@@ -2,8 +2,8 @@
 import { watchEffect, ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAppStore } from '../stores/appStore'
-import ProductDetails from '../components/ProductDetails.vue'
-import ProductDetailSkeleton from '../components/ProductDetailSkeleton.vue'
+import ProductDetails from '../components/products/ProductDetails.vue'
+import ProductDetailSkeleton from '../components/products/ProductDetailSkeleton.vue'
 
 const appStore = useAppStore()
 const {

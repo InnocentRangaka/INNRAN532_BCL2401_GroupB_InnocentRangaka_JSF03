@@ -156,6 +156,9 @@ export const useAppStore = defineStore('appStore', {
         }, 1000);
       }
     },
+    setSearchTerm(term){
+      this.searchTerm = term;
+    },
     setFilterItem(term){
       this.filterItem = term;
     },
@@ -195,7 +198,20 @@ export const useAppStore = defineStore('appStore', {
       }      
     },
     searchProducts() {
-      // Implement search logic here
+      const searchTerm = this.searchTerm,
+      thisProducts = this.getOriginalProducts,
+      term = searchTerm.toString().toLowerCase()
+      let searchedProducts;
+
+      if(term.trim() != ''){
+        const filteredProducts = Object.values(thisProducts).filter((product) => product.title.toLowerCase().includes(term));
+        searchedProducts = JSON.parse(JSON.stringify(filteredProducts));
+      }
+      else {
+        searchedProducts = JSON.parse(JSON.stringify(thisProducts));
+      }
+
+      this.products = searchedProducts;
     },
     showToast(message) {
       this.toastMessage = message;

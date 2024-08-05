@@ -7,7 +7,7 @@ const appStore = useAppStore()
 // const app = computed(() => appStore.state)
 const currentLocation = computed(() => appStore.currentLocation)
 const currentQuery = computed(() => appStore.currentLocation.query)
-const searchTerm = computed(() => appStore.searchTerm)
+const searchTerm = ref(appStore.searchTerm)
 const filterItem = computed(() => appStore.getFilterItem)
 const dropdownOpen = computed(() => appStore.dropdownOpen)
 const sorting = ref(appStore.sorting)
@@ -22,17 +22,9 @@ const setFilterItem = (item, clicked = true) => {
   if (clicked) updateURL()
 }
 
-const searchProducts = (term, clicked = true) => {
-  //   appStore.commit('setSearchTerm', term)
-  //   let stateProducts = appStore.state.originalProducts
-  //   let searchedProducts =
-  //     searchTerm.value.trim() !== ''
-  //       ? stateProducts.filter((product) =>
-  //           product.title.toLowerCase().includes(searchTerm.value.toLowerCase())
-  //         )
-  //       : stateProducts
-  //   if (clicked) updateURL()
-  //   appStore.commit('setProducts', searchedProducts)
+const searchProducts = (term, clicked = false) => {
+  appStore.setSearchTerm(term)
+  if (clicked) updateURL()
 }
 
 const sortProducts = (sort, clicked = true) => {
@@ -61,6 +53,9 @@ const updateURL = () => {
   if (filterItem.value !== 'All categories') params.set('filter', filterItem.value)
 
   if (sorting.value && sorting.value !== 'default') params.set('sort', sorting.value)
+
+  if (searchTerm.value) params.set('search', searchTerm.value)
+
   let currentParams = params.size > 0 ? `?${params}` : ''
 
   window.history.replaceState({}, '', `${window.location.pathname}${currentParams}`)
@@ -74,7 +69,7 @@ onMounted(handleSearchParams)
     class="container grid grid-rows-2 lg:grid-rows-1 lg:grid-cols-2 gap-y-4 gap-x-48 lg:items-start mt-3 mx-auto px-2 md:px-0 justify-center"
   >
     <!-- Filter -->
-    <form @submit.prevent="searchProducts(searchTerm)">
+    <form @submit.prevent="searchProducts(searchTerm, true)">
       <div class="flex lg:w-[31.25rem] sm:w-[95%] md:w-full relative">
         <button
           @click="toggleFilterDropdown"

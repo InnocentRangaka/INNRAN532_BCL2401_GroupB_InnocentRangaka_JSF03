@@ -3,7 +3,7 @@ import { onMounted, ref, watch } from 'vue'
 import { useAppStore } from '../../stores/appStore'
 import SearchFilterSort from './SearchFilterSort.vue'
 import Footer from './Footer.vue'
-import Header from './TopHeader.vue'
+import Header from './StickyHeader.vue'
 import Toast from './Toast.vue'
 
 const appStore = useAppStore()

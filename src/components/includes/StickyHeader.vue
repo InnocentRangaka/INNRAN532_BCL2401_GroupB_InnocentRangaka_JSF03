@@ -5,6 +5,7 @@ import { useRouter } from 'vue-router'
 import CartIcon from '../icons/CartIcon.vue'
 import HeartIcon from '../icons/HeartIcon.vue'
 import HamburgerIcon from '../icons/HamburgerIcon.vue'
+import UserIcon from '../icons/UserIcon.vue'
 
 const router = useRouter()
 const appStore = useAppStore()
@@ -107,7 +108,7 @@ onMounted(async () => {
           <div class="flex flex-wrap items-center justify-end">
             <div class="hidden md:block md:w-auto" id="navbar-dropdown">
               <ul
-                class="flex flex-col top-10 font-medium p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-white md:space-x-6 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0"
+                class="flex flex-col top-10 font-medium p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-white md:space-x-3 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0"
               >
                 <li>
                   <router-link
@@ -156,11 +157,11 @@ onMounted(async () => {
                     to="/auth/login"
                     :class="{
                       'text-cyan-700': isActivePage('login'),
-                      'text-gray-700': isActivePage('login')
+                      'text-gray-700': !isActivePage('login')
                     }"
                     class="block py-2 px-3 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0"
                   >
-                    Login
+                    <UserIcon />
                   </router-link>
                 </li>
               </ul>
@@ -224,7 +225,7 @@ onMounted(async () => {
                 'text-cyan-700': isActivePage('login'),
                 'text-gray-700': isActivePage('login')
               }"
-              class="block py-2 px-3 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0"
+              class="block py-2 px-3 rounded font-medium hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0"
             >
               Login
             </router-link>

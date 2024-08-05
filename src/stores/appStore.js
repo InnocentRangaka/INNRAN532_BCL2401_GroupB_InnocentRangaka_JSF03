@@ -275,5 +275,8 @@ export const useAppStore = defineStore('appStore', {
     getPageName: (state) => {
       return state.pageName;
     },
+    getFilterItem:(state)=>{
+      return state.filterItem;
+    },
   },
 });

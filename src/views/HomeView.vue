@@ -1,9 +1,9 @@
 <script setup>
-import { watchEffect, ref, onMounted } from 'vue'
+import { onMounted, ref, watchEffect } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { useAppStore } from '../stores/appStore'
 import ProductCards from '../components/products/ProductCards.vue'
 import ProductCardSkeleton from '../components/products/ProductCardSkeleton.vue'
+import { useAppStore } from '../stores/appStore'
 
 const appStore = useAppStore()
 const {
@@ -56,7 +56,7 @@ onMounted(async () => {
 
 watchEffect(() => {
   homeProducts
-  productsLoading = appStore.loading.products
+  productsLoading.value = appStore.loading.products
   appStore.products
 })
 </script>

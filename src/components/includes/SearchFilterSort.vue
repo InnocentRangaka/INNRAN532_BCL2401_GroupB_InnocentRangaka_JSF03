@@ -1,56 +1,49 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { watchEffect, ref, computed, onMounted } from 'vue'
 import { useAppStore } from '../../stores/appStore'
 
-const store = useAppStore()
+const appStore = useAppStore()
 
-const app = computed(() => store.state)
-const currentLocation = computed(() => store.state.currentLocation)
-const currentQuery = computed(() => store.state.currentLocation.query)
-const searchTerm = ref(store.state.searchTerm)
-const filterItem = ref(store.state.filterItem)
-const dropdownOpen = ref(store.state.dropdownOpen)
-const sorting = ref(store.state.sorting)
-const categories = computed(() => store.state.categories)
+const app = computed(() => appStore.state)
+const currentLocation = computed(() => appStore.currentLocation)
+const currentQuery = computed(() => appStore.currentLocation.query)
+const searchTerm = computed(() => appStore.searchTerm)
+const filterItem = computed(() => appStore.getFilterItem)
+const dropdownOpen = computed(() => appStore.dropdownOpen)
+const sorting = computed(() => appStore.sorting)
+const categories = computed(() => appStore.getCategories)
 
 const toggleFilterDropdown = () => {
-  store.commit('toggleDropdown')
+  appStore.dropdownOpen = !dropdownOpen.value
 }
 
 const setFilterItem = (item, clicked = true) => {
-  store.commit('setFilterItem', item)
+  appStore.setFilterItem(item)
   if (clicked) updateURL()
-  store.dispatch('fetchProducts')
 }
 
 const searchProducts = (term, clicked = true) => {
-  store.commit('setSearchTerm', term)
-  let stateProducts = store.state.originalProducts
-
-  let searchedProducts =
-    searchTerm.value.trim() !== ''
-      ? stateProducts.filter((product) =>
-          product.title.toLowerCase().includes(searchTerm.value.toLowerCase())
-        )
-      : stateProducts
-
-  if (clicked) updateURL()
-
-  store.commit('setProducts', searchedProducts)
+  //   appStore.commit('setSearchTerm', term)
+  //   let stateProducts = appStore.state.originalProducts
+  //   let searchedProducts =
+  //     searchTerm.value.trim() !== ''
+  //       ? stateProducts.filter((product) =>
+  //           product.title.toLowerCase().includes(searchTerm.value.toLowerCase())
+  //         )
+  //       : stateProducts
+  //   if (clicked) updateURL()
+  //   appStore.commit('setProducts', searchedProducts)
 }
 
 const sortProducts = (sort, clicked = true) => {
-  store.commit('setSorting', sort)
-  let stateProducts = store.state.originalProducts
-
-  let sortedProducts =
-    sort !== 'default'
-      ? [...stateProducts].sort((a, b) => (sort === 'low' ? a.price - b.price : b.price - a.price))
-      : stateProducts
-
-  if (clicked) updateURL()
-
-  store.commit('setProducts', sortedProducts)
+  //   appStore.setSorting(sort)
+  //   let stateProducts = appStore.state.originalProducts
+  //   let sortedProducts =
+  //     sort !== 'default'
+  //       ? [...stateProducts].sort((a, b) => (sort === 'low' ? a.price - b.price : b.price - a.price))
+  //       : stateProducts
+  //   if (clicked) updateURL()
+  //   appStore.commit('setProducts', sortedProducts)
 }
 
 const capitalizeFirstLetters = (str) => {
@@ -58,23 +51,26 @@ const capitalizeFirstLetters = (str) => {
 }
 
 const handleSearchParams = () => {
-  let params = new URLSearchParams(window.location.search)
-  let query = new URLSearchParams(window.location.query)
-
-  let filter = params.get('filter') || query.get('filter') || currentQuery.value?.filter || ''
-  let sort = params.get('sort') || query.get('sort') || currentQuery.value?.sort || ''
-  let search = params.get('search') || query.get('search') || currentQuery.value?.search || ''
-
-  if (search && search !== 'undefined') searchProducts(search, false)
-  if (filter && filter !== 'undefined') setFilterItem(filter, false)
-  if (sort && sort !== 'undefined') sortProducts(sort, false)
+  //   let params = new URLSearchParams(window.location.search)
+  //   let query = new URLSearchParams(window.location.query)
+  //   let filter = params.get('filter') || query.get('filter') || currentQuery.value?.filter || ''
+  //   let sort = params.get('sort') || query.get('sort') || currentQuery.value?.sort || ''
+  //   let search = params.get('search') || query.get('search') || currentQuery.value?.search || ''
+  //   if (search && search !== 'undefined') searchProducts(search, false)
+  //   if (filter && filter !== 'undefined') setFilterItem(filter, false)
+  //   if (sort && sort !== 'undefined') sortProducts(sort, false)
 }
 
 const updateURL = () => {
   let params = new URLSearchParams()
   if (filterItem.value !== 'All categories') params.set('filter', filterItem.value)
+
   if (sorting.value && sorting.value !== 'default') params.set('sort', sorting.value)
-  window.history.replaceState({}, '', `${window.location.pathname}?${params}`)
+  let currentParams = params.size > 0 ? `?${params}` : ''
+  if (params) {
+    console.log(params)
+  }
+  window.history.replaceState({}, '', `${window.location.pathname}${currentParams}`)
 }
 
 onMounted(handleSearchParams)

@@ -7,16 +7,7 @@ import ProductCardSkeleton from '../components/products/ProductCardSkeleton.vue'
 import { fetchProducts } from '../api/api'
 
 const appStore = useAppStore()
-const {
-  // fetchProducts,
-  getCategories,
-  categories,
-  setFilterItem,
-  products,
-  loading,
-  error,
-  setPageLoading
-} = appStore
+const { setFilterItem, loading } = appStore
 
 // Using vue-router hooks
 const route = useRoute()
@@ -38,7 +29,7 @@ const fetchProductsByCategory = async (name) => {
     await new Promise((resolve) => setTimeout(resolve, 100))
   }
 
-  categoryProducts = data.value
+  categoryProducts.value = data.value
 
   return currentCategory
 }

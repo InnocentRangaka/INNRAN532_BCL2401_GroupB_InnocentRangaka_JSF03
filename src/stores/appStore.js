@@ -101,8 +101,8 @@ export const useAppStore = defineStore('appStore', {
     setProducts(products) {
       this.products = products;
     },
-    setOriginalProducts(originalProducts) {
-      this.originalProducts = originalProducts;
+    setOriginalProducts(products) {
+      this.originalProducts = products;
     },
     setViewProduct(product) {
       this.viewProduct = product;

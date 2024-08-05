@@ -8,12 +8,12 @@ const appStore = useAppStore()
 const currentLocation = computed(() => appStore.currentLocation)
 const currentQuery = computed(() => appStore.currentLocation.query)
 const searchTerm = ref(appStore.searchTerm)
-const filterItem = computed(() => appStore.getFilterItem)
+const filterItem = ref(appStore.getFilterItem)
 const dropdownOpen = computed(() => appStore.dropdownOpen)
 const sorting = ref(appStore.sorting)
 const categories = computed(() => appStore.getCategories)
 
-console.log(currentLocation.value)
+// console.log(currentLocation.value)
 
 const toggleFilterDropdown = () => {
   appStore.dropdownOpen = !dropdownOpen.value
@@ -36,7 +36,7 @@ const sortProducts = (sort, clicked = true) => {
 }
 
 const capitalizeFirstLetters = (str) => {
-  return str ? str.replace(/(?:^|\s)\S/g, (match) => match.toUpperCase()) : null
+  return str ? str.toString().replace(/(?:^|\s)\S/g, (match) => match.toUpperCase()) : null
 }
 
 const handleSearchParams = () => {

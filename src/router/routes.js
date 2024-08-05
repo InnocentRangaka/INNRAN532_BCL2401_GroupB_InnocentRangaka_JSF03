@@ -31,7 +31,7 @@ const routes = [
     {
       path: '/auth/login',
       name: 'Login',
-    //   component: () => import('../pages/auth/Login.vue'),
+      component: () => import('../views/auth/LoginView.vue'),
     },
     {
       path: '/:catchAll(.*)',

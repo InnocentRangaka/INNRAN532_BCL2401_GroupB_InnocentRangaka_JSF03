@@ -1,6 +1,11 @@
 <script setup>
 import { watchEffect, ref, computed, onMounted } from 'vue'
 import { useAppStore } from '../../stores/appStore'
+import { useRoute, useRouter } from 'vue-router'
+
+// Using vue-router hooks
+const route = useRoute()
+const router = useRouter()
 
 const appStore = useAppStore()
 
@@ -73,7 +78,6 @@ const handleSearchParams = () => {
   if (sortingTerm) {
     currentSortTerm.value = sortingTerm
     sortProducts(sortingTerm, false)
-    console.log('sortingTerm', sortingTerm, currentSortTerm.value)
   }
 }
 
@@ -85,9 +89,7 @@ const updateURL = () => {
 
   if (searchTerm.value) params.set('search', searchTerm.value)
 
-  let currentParams = params.size > 0 ? `?${params}` : ''
-
-  window.history.replaceState({}, '', `${window.location.pathname}${currentParams}`)
+  router.replace({ query: Object.fromEntries(params.entries()) })
 }
 
 onMounted(handleSearchParams)

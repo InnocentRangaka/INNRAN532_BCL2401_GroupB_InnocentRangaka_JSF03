@@ -14,7 +14,7 @@ let currentProducts = ref(appStore.products)
 
 // Fetch products on mount
 onMounted(async () => {
-  currentProducts = appStore.products
+  currentProducts.value = appStore.products
   setTimeout(() => {
     // appStore.setProductsLoading(false)
     // console.log(currentProducts.value, getProducts, appStore.products)
@@ -22,7 +22,7 @@ onMounted(async () => {
 })
 
 watchEffect(() => {
-  currentProducts = appStore.products
+  currentProducts.value = appStore.products
   appStore.getProducts
   appStore.products
 })

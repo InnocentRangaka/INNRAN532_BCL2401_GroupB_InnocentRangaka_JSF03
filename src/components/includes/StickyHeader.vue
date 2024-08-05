@@ -2,6 +2,7 @@
 import { ref, onMounted, computed } from 'vue'
 import { useAppStore } from '../../stores/appStore'
 import { useRouter } from 'vue-router'
+
 import CartIcon from '../icons/CartIcon.vue'
 import HeartIcon from '../icons/HeartIcon.vue'
 import HamburgerIcon from '../icons/HamburgerIcon.vue'
@@ -13,9 +14,9 @@ const appStore = useAppStore()
 const { fetchCategories } = appStore
 
 const categories = ref([])
-const wishListItems = ref(0)
-const cartTotalItems = ref(0)
 const mobileMenuOpen = ref(false)
+const cartTotalItems = computed(() => appStore.cart.totalItems)
+const wishListItems = computed(() => appStore.wishList)
 
 let pageName = computed(() => router.currentRoute.value.name)
 const isActivePage = (name) => {
@@ -42,8 +43,8 @@ const capitalizeMenuName = (name) => name.charAt(0).toUpperCase() + name.slice(1
 onMounted(async () => {
   await fetchCategories(appStore)
   categories.value = appStore?.categories
-  wishListItems.value = appStore?.wishList && Object.values(appStore?.wishList)?.length
-  cartTotalItems.value = appStore?.cart?.totalItems
+  // wishListItems.value = appStore?.wishList && Object.values(appStore?.wishList)?.length
+  // cartTotalItems.value = appStore?.cart?.totalItems
 })
 </script>
 
@@ -55,13 +56,13 @@ onMounted(async () => {
         <router-link to="/" class="flex items-center space-x-3 rtl:space-x-reverse">
           <img src="/src/assets/online-shop.png" class="h-8" alt="SwiftCart Logo" />
           <span
-            class="self-center text-2xl font-semibold whitespace-nowrap text-gray-700 md:hover:text-blue-700"
+            class="hidden sm:flex self-center text-2xl font-semibold whitespace-nowrap text-gray-700 md:hover:text-blue-700"
           >
             SwiftCart
           </span>
         </router-link>
 
-        <div class="hidden lg:flex items-center space-x-8">
+        <div class="hidden sm:flex items-center space-x-8">
           <router-link
             v-if="categories.length > 0"
             to="/"
@@ -120,11 +121,11 @@ onMounted(async () => {
                     class="group hover:bg-gray-100 md:hover:bg-transparent"
                   >
                     <div class="hidden lg:block md:block relative">
-                      <div v-if="wishListItems" class="t-0 absolute left-3 -top-4">
+                      <div v-if="wishListItems.totalItems" class="t-0 absolute left-3 -top-4">
                         <p
                           class="flex h-2 w-2 items-center justify-center rounded-full bg-red-500 p-3 text-xs text-white"
                         >
-                          {{ wishListItems }}
+                          {{ wishListItems.totalItems }}
                         </p>
                       </div>
                       <HeartIcon />

@@ -6,16 +6,7 @@ import ProductCardSkeleton from '../components/products/ProductCardSkeleton.vue'
 import { useAppStore } from '../stores/appStore'
 
 const appStore = useAppStore()
-const {
-  fetchProducts,
-  setFilterItem,
-  getCategories,
-  categories,
-  products,
-  loading,
-  error,
-  setPageLoading
-} = appStore
+const { fetchProducts, products, loading } = appStore
 
 // Using vue-router hooks
 const route = useRoute()

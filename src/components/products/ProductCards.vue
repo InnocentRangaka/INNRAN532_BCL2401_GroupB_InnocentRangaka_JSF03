@@ -8,7 +8,7 @@ const appStore = useAppStore()
 const route = useRoute()
 const router = useRouter()
 
-const { isInWishList, addToCart, getProducts, products } = appStore
+const { isInWishList, addToCart, addToFavourites } = appStore
 
 let currentProducts = ref(appStore.products)
 
@@ -76,11 +76,15 @@ watchEffect(() => {
           <div class="flex justify-end space-x-2 place-items-center items-center">
             <button
               class="bg-transparent"
-              :class="isInWishList(product.id) ? 'cursor-pointer text-red-500' : 'cursor-pointer'"
+              :class="
+                isInWishList(product.id)
+                  ? 'cursor-pointer text-red-500'
+                  : 'cursor-pointer text-gray-700'
+              "
               @click="addToFavourites(product.id)"
             >
               <svg
-                class="me-1.5 h-5 w-5 hover:fill-red-500"
+                class="me-1.5 h-5 w-5 hover:fill-red-500 hover:text-red-500"
                 aria-hidden="true"
                 xmlns="http://www.w3.org/2000/svg"
                 width="24"

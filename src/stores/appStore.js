@@ -53,7 +53,10 @@ export const useAppStore = defineStore('appStore', {
     },
 
     // Wishlist management
-    wishList: {},
+    wishList: {
+      items: {},
+      totalItems: 0
+    },
 
     // Page navigation
     pageName: null,
@@ -155,6 +158,18 @@ export const useAppStore = defineStore('appStore', {
           this.pageLoading = false;
         }, 1000);
       }
+    },
+    addToFavourites(id) {
+      const newWishList = { ...this.wishList.items };
+      if (newWishList[id]) {
+        delete newWishList[id];
+      } else {
+        newWishList[id] = true;
+      }
+      this.wishList = {
+        items: newWishList, 
+        totalItems: Object.entries(newWishList).length
+      };
     },
     setSearchTerm(term){
       this.searchTerm = term;
@@ -297,7 +312,7 @@ export const useAppStore = defineStore('appStore', {
       return state.wishList;
     },
     isInWishList: (state) => (id) => {
-      return Object.prototype.hasOwnProperty.call(state.wishList, id);
+      return Object.prototype.hasOwnProperty.call(state.wishList.items, id);
     },
     getWishListTotal: (state) => {
       return state.wishList.totalItems;

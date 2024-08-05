@@ -59,24 +59,24 @@ const handleSearchParams = () => {
       : 'All categories'
 
   if (filteringTerm) {
-    currentSearchTerm.value = filteringTerm
+    // currentSearchTerm.value = filteringTerm
     setFilterItem(filteringTerm, false)
-    console.log('filteringTerm', filteringTerm, currentFilterTerm.value)
+    // console.log('filteringTerm', filteringTerm, currentFilterTerm.value)
   }
 
   const searchingTerm =
     search && search !== 'undefined' && !search.toString().startsWith('function') ? search : ''
 
   if (searchingTerm) {
-    currentFilterTerm.value = searchingTerm
+    // currentFilterTerm.value = searchingTerm
     searchProducts(searchingTerm, false)
-    console.log('searchingTerm', searchingTerm, currentFilterTerm.value)
+    // console.log('searchingTerm', searchingTerm, currentFilterTerm.value)
   }
 
   const sortingTerm =
     sort && sort !== 'undefined' && !sort.toString().startsWith('function') ? sort : 'default'
   if (sortingTerm) {
-    currentSortTerm.value = sortingTerm
+    // currentSortTerm.value = sortingTerm
     sortProducts(sortingTerm, false)
   }
 }

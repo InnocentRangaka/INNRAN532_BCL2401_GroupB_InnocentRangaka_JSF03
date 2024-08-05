@@ -5,23 +5,25 @@ import { useAppStore } from '../../stores/appStore'
 const appStore = useAppStore()
 
 // const app = computed(() => appStore.state)
-const currentLocation = computed(() => appStore.currentLocation)
+const currentLocation = ref(appStore.currentLocation)
 const currentQuery = computed(() => appStore.currentLocation.query)
-const searchTerm = ref(appStore.searchTerm)
-const filterItem = ref(appStore.getFilterItem)
+const searchTerm = computed(() => appStore.searchTerm)
+const filterItem = computed(() => appStore.getFilterItem)
 const dropdownOpen = computed(() => appStore.dropdownOpen)
-const sorting = ref(appStore.sorting)
+const sorting = computed(() => appStore.sorting)
 const categories = computed(() => appStore.getCategories)
 
 // console.log(currentLocation.value)
-
+let currentSearchTerm = ref(searchTerm),
+  currentFilterTerm = ref(filterItem),
+  currentSortTerm = ref(sorting)
 const toggleFilterDropdown = () => {
   appStore.dropdownOpen = !dropdownOpen.value
 }
 
 const setFilterItem = (item, clicked = true) => {
   appStore.setFilterItem(item)
-  if (clicked) updateURL()
+  if (clicked || item === '') updateURL()
 }
 
 const searchProducts = (term, clicked = false) => {
@@ -32,7 +34,7 @@ const searchProducts = (term, clicked = false) => {
 const sortProducts = (sort, clicked = true) => {
   appStore.setSorting(sort)
   appStore.sortProducts()
-  if (clicked) updateURL()
+  if (clicked || sort === '') updateURL()
 }
 
 const capitalizeFirstLetters = (str) => {
@@ -46,20 +48,32 @@ const handleSearchParams = () => {
   let sort = params.get('sort') || query.get('sort') || currentQuery.value?.sort || ''
   let search = params.get('search') || query.get('search') || currentQuery.value?.search || ''
 
-  if (filter && filter !== 'undefined' && !filter.toString().startsWith('function')) {
-    filterItem.value = filter
-    setFilterItem(filter, false)
+  const filteringTerm =
+    filter && filter !== 'undefined' && !filter.toString().startsWith('function')
+      ? filter
+      : 'All categories'
+
+  if (filteringTerm) {
+    currentSearchTerm.value = filteringTerm
+    setFilterItem(filteringTerm, false)
+    console.log('filteringTerm', filteringTerm, currentFilterTerm.value)
   }
 
-  if (search && search !== 'undefined' && !search.toString().startsWith('function')) {
-    console.log('loaded Search', search)
-    searchTerm.value = search
-    searchProducts(search, false)
+  const searchingTerm =
+    search && search !== 'undefined' && !search.toString().startsWith('function') ? search : ''
+
+  if (searchingTerm) {
+    currentFilterTerm.value = searchingTerm
+    searchProducts(searchingTerm, false)
+    console.log('searchingTerm', searchingTerm, currentFilterTerm.value)
   }
 
-  if (sort && sort !== 'undefined' && !sort.toString().startsWith('function')) {
-    sorting.value = sort
-    sortProducts(sort, false)
+  const sortingTerm =
+    sort && sort !== 'undefined' && !sort.toString().startsWith('function') ? sort : 'default'
+  if (sortingTerm) {
+    currentSortTerm.value = sortingTerm
+    sortProducts(sortingTerm, false)
+    console.log('sortingTerm', sortingTerm, currentSortTerm.value)
   }
 }
 
@@ -92,8 +106,9 @@ onMounted(handleSearchParams)
           class="flex-shrink-0 z-10 inline-flex items-center py-2.5 px-4 text-sm font-medium text-center justify-center place-content-center text-gray-900 bg-gray-100 border border-gray-300 rounded-s-lg hover:bg-gray-200"
           type="button"
           title="filter button"
+          :bind="currentFilterTerm"
         >
-          {{ capitalizeFirstLetters(filterItem) }}
+          {{ capitalizeFirstLetters(currentFilterTerm) }}
           <svg
             class="w-2.5 h-2.5 ms-2.5"
             :class="{ 'rotate-180': dropdownOpen, 'rotate-0': !dropdownOpen }"
@@ -178,7 +193,8 @@ onMounted(handleSearchParams)
         <label for="sort" class="w-20 my-auto mr-2 font-semibold">Sort by:</label>
         <select
           @change="sortProducts($event.target.value)"
-          v-model="sorting"
+          :bind="currentSortTerm"
+          v-model="currentSortTerm"
           id="sort"
           class="p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-e-lg border-s-gray-50 border-s-2 border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
         >

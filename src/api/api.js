@@ -1,4 +1,4 @@
-import { watchEffect } from 'vue';
+import { watchEffect, watch } from 'vue';
 import { useFetch } from '../utils/useFetch'
 
 {/* <script setup> */}
@@ -87,41 +87,72 @@ export const fetchCategories = async (app) => {
    * @param {Object} app - The application state object.
    * @returns {Promise<void>} Updates the application state with fetched products and handles loading state.
    */
-  export const fetchProducts = async (app) => {
-    app.setProductsLoading(true);
+  // export const fetchProducts = async (app) => {
+  //   app.setProductsLoading(true);
 
-    const url = app.filterItem !== 'All categories' 
-      ? `/category/${app.filterItem}`
-      : `/`;
+  //   const url = app.filterItem !== 'All categories' 
+  //     ? `/category/${app.filterItem}`
+  //     : `/`;
 
-    const { data, error, fetching } = await useFetch(url);
-    while (fetching.value) {
-      await new Promise((resolve) => setTimeout(resolve, 100))
-    }
+  //   const { data, error, fetching } = await useFetch(url);
+  //   while (fetching.value) {
+  //     await new Promise((resolve) => setTimeout(resolve, 100))
+  //   }
 
-    watchEffect(() => {
-      if(!fetching.value){
-        if(error.value) {
-          app.setError({
-            status: error.status,
-            message: 'Data fetching failed :( , please check your network connection and reload.',
-            type: 'network/fetch',
-          });
+  //   watchEffect(() => {
+  //     if(!fetching.value){
+  //       if(error.value) {
+  //         app.setError({
+  //           status: error.status,
+  //           message: 'Data fetching failed :( , please check your network connection and reload.',
+  //           type: 'network/fetch',
+  //         });
     
-          return;
-        }
+  //         return;
+  //       }
         
-        if(data.value){
-          app.setProducts(data.value);
-          app.setOriginalProducts(JSON.parse(JSON.stringify(data.value)));
-          app.searchProducts();
-          app.sortProducts();
-        }
-      }
-    })
+  //       if(data.value){
+  //         app.setProducts(data.value);
+  //         app.setOriginalProducts(JSON.parse(JSON.stringify(data.value)));
+  //         app.searchProducts();
+  //         app.sortProducts();
+  //       }
+  //     }
+  //   })
 
-    return {data, error, fetching };
-  };
+  //   return {data, error, fetching };
+  // };
+
+export const fetchProducts = async (app) => {
+  app.setProductsLoading(true);
+
+  const url = app.filterItem !== 'All categories'
+    ? `/category/${app.filterItem}`
+    : `/`;
+
+  const { data, error, fetching } = await useFetch(url);
+
+  // Watch fetching to detect when the request is completed
+  watch(fetching, async (isFetching) => {
+    if (!isFetching) {
+      if (error.value) {
+        app.setError({
+          status: error.value.status,
+          message: 'Data fetching failed :( , please check your network connection and reload.',
+          type: 'network/fetch',
+        });
+      } else if (data.value) {
+        app.setProducts(data.value);
+        app.setOriginalProducts(JSON.parse(JSON.stringify(data.value)));
+        app.searchProducts();
+        app.sortProducts();
+      }
+    }
+  });
+
+  // Return data, error, and fetching for further use if needed
+  return { data, error, fetching };
+};
 
   
   

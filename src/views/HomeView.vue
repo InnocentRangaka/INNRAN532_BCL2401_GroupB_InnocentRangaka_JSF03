@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref, watchEffect } from 'vue'
+import { onMounted, ref, computed, watchEffect } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import ProductCards from '../components/products/ProductCards.vue'
 import ProductCardSkeleton from '../components/products/ProductCardSkeleton.vue'
@@ -25,20 +25,34 @@ const router = useRouter()
 
 let homeProducts = ref(products)
 let productsLoading = ref(loading.products)
+const currentQuery = computed(() => appStore.currentLocation.query)
 
 const isHomePageShown = () => {
   // Logic to determine if the home page is shown based on the current location
 }
 
+const handleSearchParams = () => {
+  let params = new URLSearchParams(window.location.search)
+  let query = new URLSearchParams(window.location.query)
+  let filter = params.get('filter') || query.get('filter') || currentQuery.value?.filter || ''
+  let sort = params.get('sort') || query.get('sort') || currentQuery.value?.sort || ''
+  let search = params.get('search') || query.get('search') || currentQuery.value?.search || ''
+
+  if (!filter || filter == 'undefined' || filter.toString().startsWith('function')) {
+    appStore.setFilterItem('All categories')
+  }
+
+  if (!search || search == 'undefined' || search.toString().startsWith('function')) {
+    appStore.setSearchTerm('')
+  }
+
+  if (!sort || sort == 'undefined' || sort.toString().startsWith('function')) {
+    appStore.setSorting('default')
+  }
+}
+
 const getHomeProducts = () => {
-  const path = route.path,
-    query = route.query
-
-  // console.log(Object.values(query).length)
-
-  // if (Object.values(query).length === 0) {
-  //   setFilterItem('All categories')
-  // }
+  handleSearchParams()
   fetchProducts()
 }
 

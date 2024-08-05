@@ -13,6 +13,8 @@ const dropdownOpen = computed(() => appStore.dropdownOpen)
 const sorting = ref(appStore.sorting)
 const categories = computed(() => appStore.getCategories)
 
+console.log(currentLocation.value)
+
 const toggleFilterDropdown = () => {
   appStore.dropdownOpen = !dropdownOpen.value
 }
@@ -24,7 +26,7 @@ const setFilterItem = (item, clicked = true) => {
 
 const searchProducts = (term, clicked = false) => {
   appStore.setSearchTerm(term)
-  if (clicked) updateURL()
+  if (clicked || term === '') updateURL()
 }
 
 const sortProducts = (sort, clicked = true) => {
@@ -38,14 +40,27 @@ const capitalizeFirstLetters = (str) => {
 }
 
 const handleSearchParams = () => {
-  //   let params = new URLSearchParams(window.location.search)
-  //   let query = new URLSearchParams(window.location.query)
-  //   let filter = params.get('filter') || query.get('filter') || currentQuery.value?.filter || ''
-  //   let sort = params.get('sort') || query.get('sort') || currentQuery.value?.sort || ''
-  //   let search = params.get('search') || query.get('search') || currentQuery.value?.search || ''
-  //   if (search && search !== 'undefined') searchProducts(search, false)
-  //   if (filter && filter !== 'undefined') setFilterItem(filter, false)
-  //   if (sort && sort !== 'undefined') sortProducts(sort, false)
+  let params = new URLSearchParams(window.location.search)
+  let query = new URLSearchParams(window.location.query)
+  let filter = params.get('filter') || query.get('filter') || currentQuery.value?.filter || ''
+  let sort = params.get('sort') || query.get('sort') || currentQuery.value?.sort || ''
+  let search = params.get('search') || query.get('search') || currentQuery.value?.search || ''
+
+  if (filter && filter !== 'undefined' && !filter.toString().startsWith('function')) {
+    filterItem.value = filter
+    setFilterItem(filter, false)
+  }
+
+  if (search && search !== 'undefined' && !search.toString().startsWith('function')) {
+    console.log('loaded Search', search)
+    searchTerm.value = search
+    searchProducts(search, false)
+  }
+
+  if (sort && sort !== 'undefined' && !sort.toString().startsWith('function')) {
+    sorting.value = sort
+    sortProducts(sort, false)
+  }
 }
 
 const updateURL = () => {

@@ -108,23 +108,14 @@ export const fetchCategories = async (app) => {
             type: 'network/fetch',
           });
     
-          // console.log('Error', error.value)
-    
           return;
         }
         
         if(data.value){
           app.setProducts(data.value);
           app.setOriginalProducts(JSON.parse(JSON.stringify(data.value)));
-          // app.setProductsLoading(false);
-    
-          // console.log('Data', app.products)
-    
-          app.sortProducts();
           app.searchProducts();
-          // setTimeout(() => {
-          //   app.setPageLoading(false);
-          // }, 1000);
+          app.sortProducts();
         }
       }
     })

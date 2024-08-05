@@ -36,9 +36,9 @@ const getHomeProducts = () => {
 
   // console.log(Object.values(query).length)
 
-  if (Object.values(query).length === 0) {
-    setFilterItem('All categories')
-  }
+  // if (Object.values(query).length === 0) {
+  //   setFilterItem('All categories')
+  // }
   fetchProducts()
 }
 

@@ -4,13 +4,13 @@ import { useAppStore } from '../../stores/appStore'
 
 const appStore = useAppStore()
 
-const app = computed(() => appStore.state)
+// const app = computed(() => appStore.state)
 const currentLocation = computed(() => appStore.currentLocation)
 const currentQuery = computed(() => appStore.currentLocation.query)
 const searchTerm = computed(() => appStore.searchTerm)
 const filterItem = computed(() => appStore.getFilterItem)
 const dropdownOpen = computed(() => appStore.dropdownOpen)
-const sorting = computed(() => appStore.sorting)
+const sorting = ref(appStore.sorting)
 const categories = computed(() => appStore.getCategories)
 
 const toggleFilterDropdown = () => {
@@ -36,14 +36,9 @@ const searchProducts = (term, clicked = true) => {
 }
 
 const sortProducts = (sort, clicked = true) => {
-  //   appStore.setSorting(sort)
-  //   let stateProducts = appStore.state.originalProducts
-  //   let sortedProducts =
-  //     sort !== 'default'
-  //       ? [...stateProducts].sort((a, b) => (sort === 'low' ? a.price - b.price : b.price - a.price))
-  //       : stateProducts
-  //   if (clicked) updateURL()
-  //   appStore.commit('setProducts', sortedProducts)
+  appStore.setSorting(sort)
+  appStore.sortProducts()
+  if (clicked) updateURL()
 }
 
 const capitalizeFirstLetters = (str) => {
@@ -67,9 +62,7 @@ const updateURL = () => {
 
   if (sorting.value && sorting.value !== 'default') params.set('sort', sorting.value)
   let currentParams = params.size > 0 ? `?${params}` : ''
-  if (params) {
-    console.log(params)
-  }
+
   window.history.replaceState({}, '', `${window.location.pathname}${currentParams}`)
 }
 
@@ -182,6 +175,12 @@ onMounted(handleSearchParams)
           <option value="default">Default</option>
           <option value="low">Price: Low to High</option>
           <option value="high">Price: High to Low</option>
+          <option value="A-Z">Name: A to Z</option>
+          <option value="Z-A">Name: Z to A</option>
+          <option value="lowRating">Rating: Low</option>
+          <option value="HighRating">Rating: High</option>
+          <option value="categoryA-Z">Category: A to Z</option>
+          <option value="categoryZ-A">Category: Z to A</option>
         </select>
       </div>
     </div>

@@ -159,8 +159,40 @@ export const useAppStore = defineStore('appStore', {
     setFilterItem(term){
       this.filterItem = term;
     },
+    setSorting(term){
+      this.sorting = term;
+    },
     sortProducts() {
-      // Implement sorting logic here
+      const sortingTerm = this.sorting
+      switch (sortingTerm) {
+        case 'low':
+        case 'high':
+          this.products = Object.values(this.products).sort((a, b) => sortingTerm === 'low' ? a.price - b.price : b.price - a.price);
+          break;
+        case 'A-Z':
+        case 'Z-A':
+          this.products = Object.values(this.products).sort((a, b) => sortingTerm === 'A-Z' ? a.title.localeCompare(b.title) : b.title.localeCompare(a.title));
+          break;
+        case 'lowRating':
+        case 'highRating':
+          this.products = Object.values(this.products).sort((a, b) => sortingTerm === 'lowRating' ? a.rating.rate - b.rating.rate : b.rating.rate - a.rating.rate);
+          break;
+        case 'categoryA-Z':
+        case 'categoryZ-A':
+          this.products = Object.values(this.products).sort((a, b) => sortingTerm === 'categoryA-Z' ? a.category.localeCompare(b.category) : b.category.localeCompare(a.category));
+          break;
+        case 'default':
+          this.products = JSON.parse(JSON.stringify(this.originalProducts));
+          break;
+        default:
+          // Erroy unexpected sortingTerm values
+          this.error = {
+            status: 'invalid value',
+            message: `Invalid sortingTerm: '${sortingTerm}'`,
+            type: 'sorting',
+          };
+          break;
+      }      
     },
     searchProducts() {
       // Implement search logic here
@@ -277,6 +309,9 @@ export const useAppStore = defineStore('appStore', {
     },
     getFilterItem:(state)=>{
       return state.filterItem;
+    },
+    getSorting:(state)=>{
+      return state.sorting;
     },
   },
 });

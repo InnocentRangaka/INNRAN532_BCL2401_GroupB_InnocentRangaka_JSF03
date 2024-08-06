@@ -15,9 +15,9 @@ const subTotalAmount = computed(() => appStore.cart.subTotalAmount),
 
 const initiateCart = () => {
   const { cartItems, totalItems, subTotalAmount, taxAmount, totalAmount } = cart
-  cart.addToCartText = cart.addToCartText
-  cart.shippingRate = cart.shippingRate
-  cart.shippingMethod = cart.shippingMethod
+  // cart.addToCartText = cart.addToCartText
+  // cart.shippingRate = cart.shippingRate
+  // cart.shippingMethod = cart.shippingMethod
   cart.cartItems = cartItems
   cart.totalItems = totalItems
   cart.subTotalAmount = subTotalAmount

@@ -82,7 +82,6 @@ export const useAppStore = defineStore('appStore', {
       }
     },
 
-    // Toast
     /**
      * Toast object.
      */
@@ -94,6 +93,7 @@ export const useAppStore = defineStore('appStore', {
       message: null, // Toast message.
       display: null, // Toast display component.
     },
+
   }),
   actions: {
     formatPrice: (price) => price.toFixed(2),
@@ -225,7 +225,6 @@ export const useAppStore = defineStore('appStore', {
       this.toast.display = true
       
       if (this.toast.interval) {
-        // closeToast()
         clearInterval(this.toast.interval);
         this.toast.interval = null;
       }
@@ -365,9 +364,7 @@ export const useAppStore = defineStore('appStore', {
     getCart: (state) => {
       return state.cart;
     },
-    // getCart: (state) => {
-    //   return state.products.filter((product) => state.cart[product.id]);
-    // },
+    
     getCartTotal: (state) => {
       return state.cart.totalItems;
     },

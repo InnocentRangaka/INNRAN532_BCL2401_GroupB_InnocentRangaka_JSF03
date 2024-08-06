@@ -11,10 +11,8 @@ const goBack = () => {
 }
 
 const handleSubmit = () => {
-  // Handle form submission logic here
-  console.log('Email:', email.value)
-  console.log('Password:', password.value)
-  // Perform the login action (e.g., API call) and handle the response
+  // console.log('Email:', email.value)
+  // console.log('Password:', password.value)
 }
 </script>
 

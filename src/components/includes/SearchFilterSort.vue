@@ -21,7 +21,8 @@ const categories = computed(() => appStore.getCategories)
 // console.log(currentLocation.value)
 let currentSearchTerm = ref(searchTerm.value),
   currentFilterTerm = ref(filterItem.value),
-  currentSortTerm = ref(sorting.value)
+  currentSortTerm = ref(sorting.value),
+  showSearchFilterSort = ref(true)
 const toggleFilterDropdown = () => {
   appStore.dropdownOpen = !dropdownOpen.value
 }
@@ -96,14 +97,21 @@ const updateURL = () => {
 
 onMounted(handleSearchParams)
 
+const handleShowSearchFilterSort = (pathName) => {
+  const isNotProductShow =
+    pathName.startsWith('/wishlist') || pathName.startsWith('/auth') || pathName.startsWith('/cart')
+  showSearchFilterSort.value = !isNotProductShow
+}
+
 watch(currentLocation, async () => {
-  // console.log(currentLocation.value)
   handleSearchParams()
+  handleShowSearchFilterSort(currentLocation.value.path)
 })
 </script>
 
 <template>
   <div
+    v-if="showSearchFilterSort"
     class="container grid grid-rows-2 lg:grid-rows-1 lg:grid-cols-2 gap-y-4 gap-x-48 lg:items-start mt-3 mx-auto px-2 md:px-0 justify-center"
   >
     <!-- Filter -->

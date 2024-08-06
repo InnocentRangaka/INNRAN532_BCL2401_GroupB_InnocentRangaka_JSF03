@@ -21,7 +21,7 @@ const handleSubmit = () => {
 <template>
   <div class="container flex items-center mx-auto px-4 py-4 min-h-[44px]">
     <div class="mb-2 text-xs text-left flex items-start mr-auto">
-      <a @click="goBack" class="cursor-pointer hover:text-cyan-900 hover:underline">
+      <a @click="goBack" class="cursor-pointer text-gray-500 hover:text-cyan-900 hover:underline">
         <span class="flex h-full items-center text-xs text-left">
           <svg
             xmlns="http://www.w3.org/2000/svg"

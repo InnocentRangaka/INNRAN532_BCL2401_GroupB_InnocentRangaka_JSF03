@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref, watch } from 'vue'
+import { onMounted, ref, computed, watch } from 'vue'
 import { useAppStore } from '../../stores/appStore'
 import SearchFilterSort from './SearchFilterSort.vue'
 import Footer from './Footer.vue'
@@ -9,13 +9,20 @@ import SuccessToast from './SuccessToast.vue'
 const appStore = useAppStore()
 const { fetchCategories, error } = appStore
 
-const showTopPart = ref(true)
-
+const currentLocation = computed(() => appStore.currentLocation),
+  showTopPart = ref(true),
+  showSearchFilterSort = ref(true)
 const isTopPartShown = () => {
   const isAuthPage = appStore.pages.authPages.includes(appStore.pageName)
   const cartPages = appStore.pages.cartPages.includes(appStore.pageName)
 
   showTopPart.value = !(isAuthPage || cartPages)
+}
+
+const handleShowSearchFilterSort = (pathName) => {
+  const isNotProductShow =
+    pathName.startsWith('/wishlist') || pathName.startsWith('/auth') || pathName.startsWith('/cart')
+  showTopPart.value = !isNotProductShow
 }
 
 onMounted(() => {
@@ -24,12 +31,11 @@ onMounted(() => {
   fetchCategories()
 })
 
-watch(
-  () => appStore.pageName,
-  () => {
-    isTopPartShown()
-  }
-)
+watch(currentLocation, () => {
+  appStore.pageName
+  // isTopPartShown()
+  handleShowSearchFilterSort(currentLocation.value.path)
+})
 </script>
 
 <template>

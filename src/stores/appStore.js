@@ -1,7 +1,7 @@
 // store.js
 import { defineStore } from 'pinia';
 import axios from 'axios';
-import { fetchCategories, fetchSingleProduct, fetchProducts } from '../api/api';
+import { fetchCategories, fetchSingleProduct, fetchProducts, fetchFavourites } from '../api/api';
 import { calculateSubTotalAmount, calculateTaxAmount, calculateCartTotal } from '../utils/utils'
 
 export const useAppStore = defineStore('appStore', {
@@ -114,6 +114,13 @@ export const useAppStore = defineStore('appStore', {
       this.loading = loading;
     },
     setProductsLoading(loading) {
+      if (typeof this.loading !== 'object') {
+        this.loading = {
+          products: true,
+          cart: false,
+          page: true,
+        };
+      }
       this.loading.products = loading;
     },
     setError(error) {
@@ -132,32 +139,7 @@ export const useAppStore = defineStore('appStore', {
         await fetchProducts(this);
     },
     async fetchFavourites(objectArray) {
-      this.loading = true;
-      try {
-        const ids = [...new Set(Object.values(objectArray))];
-        const promises = ids.map(id => this.fetchSingleProduct(parseInt(id)));
-        const results = await Promise.all(promises);
-
-        const list = results.map(result => result.response).filter(response => response);
-
-        if (list.length > 0) {
-          this.products = list;
-          this.originalProducts = JSON.parse(JSON.stringify(list));
-        }
-      } catch (error) {
-        this.error = {
-          status: error.response.status,
-          message: 'Data fetching failed :( , please check your network connection and reload.',
-          type: 'network/fetch',
-        };
-      } finally {
-        this.sortProducts();
-        this.searchProducts();
-        this.loading = false;
-        setTimeout(() => {
-          this.pageLoading = false;
-        }, 1000);
-      }
+      await fetchFavourites(objectArray, this)
     },
     addToFavourites(id) {
       const newWishList = { ...this.wishList.items };

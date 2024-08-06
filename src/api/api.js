@@ -1,5 +1,5 @@
-import { watchEffect, watch } from 'vue';
-import { useFetch } from '../utils/useFetch'
+import { watch, watchEffect } from 'vue';
+import { useFetch } from '../utils/useFetch';
 
 {/* <script setup> */}
 // re-fetch when props.id changes
@@ -87,42 +87,6 @@ export const fetchCategories = async (app) => {
    * @param {Object} app - The application state object.
    * @returns {Promise<void>} Updates the application state with fetched products and handles loading state.
    */
-  // export const fetchProducts = async (app) => {
-  //   app.setProductsLoading(true);
-
-  //   const url = app.filterItem !== 'All categories' 
-  //     ? `/category/${app.filterItem}`
-  //     : `/`;
-
-  //   const { data, error, fetching } = await useFetch(url);
-  //   while (fetching.value) {
-  //     await new Promise((resolve) => setTimeout(resolve, 100))
-  //   }
-
-  //   watchEffect(() => {
-  //     if(!fetching.value){
-  //       if(error.value) {
-  //         app.setError({
-  //           status: error.status,
-  //           message: 'Data fetching failed :( , please check your network connection and reload.',
-  //           type: 'network/fetch',
-  //         });
-    
-  //         return;
-  //       }
-        
-  //       if(data.value){
-  //         app.setProducts(data.value);
-  //         app.setOriginalProducts(JSON.parse(JSON.stringify(data.value)));
-  //         app.searchProducts();
-  //         app.sortProducts();
-  //       }
-  //     }
-  //   })
-
-  //   return {data, error, fetching };
-  // };
-
 export const fetchProducts = async (app) => {
   app.setProductsLoading(true);
 
@@ -155,4 +119,51 @@ export const fetchProducts = async (app) => {
 };
 
   
-  
+export const fetchFavourites = async (objectArray, app) => {
+  app.setProductsLoading(true);
+
+  const ids = [...new Set(Object.values(objectArray))];
+  const promises = ids.map(id => useFetch(`/${id}`));
+
+  const results = await Promise.all(promises);
+
+  let list = [];
+  let errorOccurred = false;
+
+  await Promise.all(
+    results.map(async ({ data, error, fetching }) => {
+      return new Promise((resolve) => {
+        watch(fetching, (isFetching) => {
+          if (!isFetching) {
+            if (error.value) {
+              errorOccurred = true;
+              app.setError({
+                status: error.value.status,
+                message: 'Data fetching failed :( , please check your network connection and reload.',
+                type: 'network/fetch',
+              });
+            } else if (data.value) {
+              list.push(data.value);
+            }
+            resolve();
+          }
+        });
+      });
+    })
+  );
+
+  if (!errorOccurred && list.length > 0) {
+    app.setProducts(list);
+    app.setOriginalProducts(JSON.parse(JSON.stringify(list)));
+    app.searchProducts();
+    app.sortProducts();
+  }
+
+  app.setProductsLoading(false);
+
+  setTimeout(() => {
+    app.pageLoading = false;
+  }, 1000);
+
+  return { list, error: errorOccurred };
+};

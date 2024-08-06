@@ -273,12 +273,31 @@ export const useAppStore = defineStore('appStore', {
           removeItem: false,
         };
       }
+      // const cartTotalItems = Object.keys(newCartItems).length;
+      // const cartSubTotalAmount = calculateSubTotalAmount(newCartItems);
+      // const cartTaxAmount = calculateTaxAmount(newCartItems, this.taxRate);
+      // const cartTotalAmount = calculateCartTotal(newCartItems, this.taxRate, this.shippingRate);
+
+      this.updateCart(newCartItems, 'Product added to cart!');
+
+      // this.cart = { 
+      //   ...this.cart,
+      //   cartItems: newCartItems,
+      //   totalItems: cartTotalItems,
+      //   subTotalAmount: cartSubTotalAmount,
+      //   taxAmount: cartTaxAmount,
+      //   totalAmount: cartTotalAmount,
+      // };
+
+      // console.log(this.cart)
+    },
+    updateCart(newCartItems, toastMessage=''){
       const cartTotalItems = Object.keys(newCartItems).length;
       const cartSubTotalAmount = calculateSubTotalAmount(newCartItems);
       const cartTaxAmount = calculateTaxAmount(newCartItems, this.taxRate);
       const cartTotalAmount = calculateCartTotal(newCartItems, this.taxRate, this.shippingRate);
 
-      this.showToast('Product added to cart!');
+      if(toastMessage){this.showToast('Product added to cart!');}
 
       this.cart = { 
         ...this.cart,
@@ -288,8 +307,10 @@ export const useAppStore = defineStore('appStore', {
         taxAmount: cartTaxAmount,
         totalAmount: cartTotalAmount,
       };
-
-      // console.log(this.cart)
+    },
+    isInCartItems: (id, object) => {
+      const parsedObject = parseObjectToArray(object);
+      return Object.values(parsedObject).find(item => item.id === id) || false;
     },
   },
   getters: {
@@ -323,10 +344,6 @@ export const useAppStore = defineStore('appStore', {
     // getCart: (state) => {
     //   return state.products.filter((product) => state.cart[product.id]);
     // },
-    isInCartItems: (id, object) => {
-      const parsedObject = parseObjectToArray(object);
-      return Object.values(parsedObject).find(item => item.id === id) || false;
-    },
     getCartTotal: (state) => {
       return state.cart.totalItems;
     },

@@ -1,12 +1,20 @@
 <script setup>
-import { onMounted, ref, watch } from 'vue'
+import { onMounted, ref, computed, watch } from 'vue'
 import { useAppStore } from '../stores/appStore'
-import { calculateSubTotalAmount, calculateCartTotal, calculateTaxAmount } from '../utils/utils'
+import {
+  parseObjectToArray,
+  calculateSubTotalAmount,
+  calculateCartTotal,
+  calculateTaxAmount
+} from '../utils/utils'
 
 import NoItemFound from '../components/includes/NoItemFound.vue'
 
 const appStore = useAppStore()
 const { cart, isInCartItems, updateCart } = appStore
+
+const subTotalAmount = computed(() => appStore.cart.subTotalAmount),
+  totalAmount = computed(() => appStore.cart.totalAmount)
 
 const initiateCart = () => {
   const { cartItems, totalItems, subTotalAmount, taxAmount, totalAmount } = cart
@@ -25,21 +33,21 @@ const updateQuantity = (event, item) => {
   const findItemInCart = isInCartItems(item.id, appStore.cart.cartItems)
 
   if (findItemInCart) {
-    const index = cart.cartItems.indexOf(findItemInCart)
-    cart.cartItems[index].quantityUpdating = true
+    const cartItems = Object.values(parseObjectToArray(cart.cartItems))
+    const index = cartItems.indexOf(findItemInCart)
+    cartItems[index].quantityUpdating = true
 
     setTimeout(() => {
-      const newCartItems = [...cart.cartItems]
+      const newCartItems = [...cartItems]
 
       if (newCartItems[index]) {
         newCartItems[index].quantity = quantity
         newCartItems[index].totalPrice = (quantity * newCartItems[index].price).toFixed(2)
       }
 
-      // updateCart(newCartItems)
-      console.log(newCartItems)
+      updateCart(newCartItems)
 
-      cart.cartItems[index].quantityUpdating = false
+      cartItems[index].quantityUpdating = false
     }, 2000)
   }
 }
@@ -196,7 +204,7 @@ watch(
           <h2 class="text-gray-700 text-lg font-semibold mb-4">Order summary</h2>
           <div class="flex justify-between mb-2">
             <span>Subtotal</span>
-            <span class="text-gray-700">$ {{ cart.subTotalAmount }}</span>
+            <span class="text-gray-700">$ {{ subTotalAmount }}</span>
           </div>
           <div class="flex justify-between mb-2">
             <span>Shipping estimate</span>
@@ -204,7 +212,7 @@ watch(
           </div>
           <div class="flex justify-between font-semibold text-lg mb-8">
             <span>Order total</span>
-            <span class="text-gray-700">$ {{ cart.totalAmount }}</span>
+            <span class="text-gray-700">$ {{ totalAmount }}</span>
           </div>
           <a
             href="/checkout"

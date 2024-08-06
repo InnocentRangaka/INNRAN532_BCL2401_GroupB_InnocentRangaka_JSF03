@@ -1,5 +1,5 @@
 <script setup>
-import { watchEffect, ref, computed, onMounted } from 'vue'
+import { watch, ref, computed, onMounted, normalizeStyle } from 'vue'
 import { useAppStore } from '../../stores/appStore'
 import { useRoute, useRouter } from 'vue-router'
 
@@ -10,7 +10,7 @@ const router = useRouter()
 const appStore = useAppStore()
 
 // const app = computed(() => appStore.state)
-const currentLocation = ref(appStore.currentLocation)
+const currentLocation = computed(() => appStore.currentLocation)
 const currentQuery = computed(() => appStore.currentLocation.query)
 const searchTerm = computed(() => appStore.searchTerm)
 const filterItem = computed(() => appStore.getFilterItem)
@@ -19,9 +19,9 @@ const sorting = computed(() => appStore.sorting)
 const categories = computed(() => appStore.getCategories)
 
 // console.log(currentLocation.value)
-let currentSearchTerm = ref(searchTerm),
-  currentFilterTerm = ref(filterItem),
-  currentSortTerm = ref(sorting)
+let currentSearchTerm = ref(searchTerm.value),
+  currentFilterTerm = ref(filterItem.value),
+  currentSortTerm = ref(sorting.value)
 const toggleFilterDropdown = () => {
   appStore.dropdownOpen = !dropdownOpen.value
 }
@@ -29,6 +29,7 @@ const toggleFilterDropdown = () => {
 const setFilterItem = (item, clicked = true) => {
   appStore.setFilterItem(item)
   if (clicked || item === '') updateURL()
+  appStore.dropdownOpen = false
 }
 
 const searchProducts = (term, clicked = false) => {
@@ -59,7 +60,7 @@ const handleSearchParams = () => {
       : 'All categories'
 
   if (filteringTerm) {
-    // currentSearchTerm.value = filteringTerm
+    currentFilterTerm.value = filteringTerm
     setFilterItem(filteringTerm, false)
     // console.log('filteringTerm', filteringTerm, currentFilterTerm.value)
   }
@@ -68,7 +69,7 @@ const handleSearchParams = () => {
     search && search !== 'undefined' && !search.toString().startsWith('function') ? search : ''
 
   if (searchingTerm) {
-    // currentFilterTerm.value = searchingTerm
+    currentSearchTerm.value = searchingTerm
     searchProducts(searchingTerm, false)
     // console.log('searchingTerm', searchingTerm, currentFilterTerm.value)
   }
@@ -76,8 +77,9 @@ const handleSearchParams = () => {
   const sortingTerm =
     sort && sort !== 'undefined' && !sort.toString().startsWith('function') ? sort : 'default'
   if (sortingTerm) {
-    // currentSortTerm.value = sortingTerm
+    currentSortTerm.value = sortingTerm
     sortProducts(sortingTerm, false)
+    // console.log(sort, sortingTerm, currentSortTerm.value)
   }
 }
 
@@ -93,6 +95,11 @@ const updateURL = () => {
 }
 
 onMounted(handleSearchParams)
+
+watch(currentLocation, async () => {
+  // console.log(currentLocation.value)
+  handleSearchParams()
+})
 </script>
 
 <template>
@@ -166,7 +173,7 @@ onMounted(handleSearchParams)
           />
           <button
             type="submit"
-            class="absolute top-0 end-0 p-2.5 text-sm font-medium h-full text-white bg-blue-700 rounded-e-lg border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300"
+            class="absolute top-0 end-0 p-2.5 text-sm font-medium h-full text-white bg-cyan-700 rounded-e-lg border border-cyan-700 hover:bg-blue-900 focus:bg-cyan-900 focus:ring-4 focus:outline-none focus:ring-blue-300"
           >
             <svg
               class="w-4 h-4"
@@ -192,10 +199,10 @@ onMounted(handleSearchParams)
     <div class="flex w-full items-end justify-end">
       <!-- Sort -->
       <div class="flex max-w-[21rem] w-full">
-        <label for="sort" class="w-20 my-auto mr-2 font-semibold">Sort by:</label>
+        <label for="sort" class="w-20 my-auto mr-2 font-semibold text-gray-700">Sort by:</label>
         <select
           @change="sortProducts($event.target.value)"
-          :bind="currentSortTerm"
+          :bind="currentSortTerm.value"
           v-model="currentSortTerm"
           id="sort"
           class="p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-e-lg border-s-gray-50 border-s-2 border border-gray-300 focus:ring-blue-500 focus:border-blue-500"

@@ -148,10 +148,14 @@ export const useAppStore = defineStore('appStore', {
       } else {
         newWishList[id] = true;
       }
+
+      this.showToast('Product added to wishlist!');
+
       this.wishList = {
         items: newWishList, 
         totalItems: Object.entries(newWishList).length
       };
+
     },
     setSearchTerm(term){
       this.searchTerm = term;
@@ -211,10 +215,48 @@ export const useAppStore = defineStore('appStore', {
       this.products = searchedProducts;
     },
     showToast(message) {
-      this.toastMessage = message;
-      setTimeout(() => {
-        this.toastMessage = '';
-      }, 3000);
+      if(this.toast.visible || this.toast.display){
+        this.toast.visible = false
+        this.toast.display = false
+        this.toast.message = '';
+      }
+
+      this.toast.message = message;
+      this.toast.visible = true
+      this.toast.display = true
+      
+      if (this.toast.interval) {
+        // closeToast()
+        clearInterval(this.toast.interval);
+        this.toast.interval = null;
+      }
+  
+      if (this.toast.timeout) {
+        clearTimeout(this.toast.timeout);
+        this.toast.timeout = null;
+      }
+
+      this.toast.timeout = setTimeout(() => {
+        this.toast.visible = false;
+        this.toast.timeout = null;
+      }, this.toast.delay);
+  
+      const startDate = Date.now();
+      const futureDate = startDate + this.toast.delay;
+
+      this.toast.interval = setInterval(() => {
+        const dateNow = Date.now();
+        this.toast.percent = Math.floor((dateNow - startDate) * 100 / (futureDate - startDate));
+        if (this.toast.percent >= 100) {
+          clearInterval(this.toast.interval);
+          this.toast.interval = null;
+        }
+      }, 30);
+    },
+    closeToast() {
+      this.toast.visible = false;
+      clearInterval(this.toast.interval);
+      this.toast.interval = null;
     },
     addToCart(item, eventTarget = null) {
       const newCartItems = { ...this.cart.cartItems };
@@ -247,7 +289,7 @@ export const useAppStore = defineStore('appStore', {
         totalAmount: cartTotalAmount,
       };
 
-      console.log(this.cart)
+      // console.log(this.cart)
     },
   },
   getters: {

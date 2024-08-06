@@ -4,7 +4,7 @@ import { useAppStore } from '../../stores/appStore'
 import SearchFilterSort from './SearchFilterSort.vue'
 import Footer from './Footer.vue'
 import Header from './StickyHeader.vue'
-import Toast from './Toast.vue'
+import SuccessToast from './SuccessToast.vue'
 
 const appStore = useAppStore()
 const { fetchCategories, error } = appStore
@@ -55,7 +55,7 @@ watch(
     </main>
 
     <!-- Toast Notification -->
-    <Toast />
+    <SuccessToast />
 
     <!-- Footer -->
     <Footer />

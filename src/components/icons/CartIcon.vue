@@ -7,7 +7,7 @@
     viewBox="0 0 24 24"
     stroke-width="1.5"
     stroke="currentColor"
-    class="h-6 w-6 group-hover:bg-gray-100 md:group-hover:stroke-blue-700 cursor-pointer"
+    class="h-6 w-6 group-hover:bg-transparent md:group-hover:stroke-blue-700 cursor-pointer"
   >
     <path
       stroke-linecap="round"

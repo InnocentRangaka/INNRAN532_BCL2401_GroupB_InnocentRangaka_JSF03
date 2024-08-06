@@ -1,10 +1,9 @@
 <script setup>
-import { watch, ref, computed, onMounted, normalizeStyle } from 'vue'
+import { watch, ref, computed, onMounted } from 'vue'
 import { useAppStore } from '../../stores/appStore'
-import { useRoute, useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'
 
 // Using vue-router hooks
-const route = useRoute()
 const router = useRouter()
 
 const appStore = useAppStore()

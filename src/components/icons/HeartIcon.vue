@@ -2,7 +2,7 @@
 
 <template>
   <svg
-    class="h-6 w-6 group-hover:bg-gray-100 md:group-hover:stroke-blue-700 cursor-pointer"
+    class="h-6 w-6 group-hover:bg-transparent md:group-hover:stroke-blue-700 cursor-pointer"
     aria-hidden="true"
     xmlns="http://www.w3.org/2000/svg"
     fill="none"

@@ -1,20 +1,17 @@
 <script setup>
-import { onMounted, ref, computed, watch } from 'vue'
+import { onMounted, computed, watch } from 'vue'
 import { useAppStore } from '../stores/appStore'
-import {
-  parseObjectToArray,
-  calculateSubTotalAmount,
-  calculateCartTotal,
-  calculateTaxAmount
-} from '../utils/utils'
+import { parseObjectToArray } from '../utils/utils'
 
 import NoItemFound from '../components/includes/NoItemFound.vue'
 
 const appStore = useAppStore()
-const { cart, isInCartItems, updateCart } = appStore
+const { cart, isInCartItems, updateCart, removeCartItem } = appStore
 
 const subTotalAmount = computed(() => appStore.cart.subTotalAmount),
-  totalAmount = computed(() => appStore.cart.totalAmount)
+  totalAmount = computed(() => appStore.cart.totalAmount),
+  totalItems = computed(() => appStore.cart.totalItems),
+  currentCartItems = computed(() => appStore.cart.cartItems)
 
 const initiateCart = () => {
   const { cartItems, totalItems, subTotalAmount, taxAmount, totalAmount } = cart
@@ -52,17 +49,14 @@ const updateQuantity = (event, item) => {
   }
 }
 
-const removeItem = (item) => {
-  // Implement remove item logic here
-}
-
 onMounted(() => {
   initiateCart()
 })
 
 watch(
-  () => appStore.cart,
+  currentCartItems,
   () => {
+    appStore.cart
     initiateCart()
   },
   { deep: true }
@@ -75,9 +69,9 @@ watch(
       <div
         class="container grid grid-cols-1 sm:grid-cols-2 items-center mx-auto px-4 py-4 min-h-[44px]"
       >
-        <h1 class="text-gray-800 text-xl font-bold my-2">Shopping Cart ({{ cart.totalItems }})</h1>
+        <h1 class="text-gray-800 text-xl font-bold my-2">Shopping Cart ({{ totalItems }})</h1>
         <div class="mb-2 text-xs text-right flex items-end ml-auto">
-          <a href="/#/" class="cursor-pointer text-gray-900 hover:text-cyan-900 hover:underline">
+          <a href="/" class="cursor-pointer text-gray-900 hover:text-cyan-900 hover:underline">
             <span class="flex h-full items-center text-xs text-right">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -95,10 +89,10 @@ watch(
       </div>
     </div>
 
-    <div v-if="cart.totalItems > 0" class="container mx-auto mb-4">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-x-10 sm:gap-y-6 relative">
+    <div v-if="totalItems > 0" class="container mx-auto mb-4">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-3 relative">
         <div class="col-span-2 relative bg-white p-8 rounded-lg shadow-md">
-          <div v-for="cartItem in cart.cartItems" :key="cartItem.id" class="border-b pb-4 mb-4">
+          <div v-for="cartItem in currentCartItems" :key="cartItem.id" class="border-b pb-4 mb-4">
             <div class="flex justify-between items-center">
               <div class="flex items-center w-full relative gap-4 sm:gap-10">
                 <img
@@ -115,10 +109,12 @@ watch(
                       {{ cartItem.description }}
                     </p>
                     <div
-                      class="text-slate-600 flex flex-col sm:flex-row items-center sm:justify-between mt-3"
+                      class="flex gap-4 text-slate-600 flex flex-col sm:flex-row items-center sm:justify-between mt-3"
                     >
-                      <div class="w-full h-full flex items-center">
-                        <p class="text-lg font-bold">$ {{ cartItem.totalPrice }}</p>
+                      <div class="w-full flex flex-row items-center">
+                        <p class="w-full max-w-max text-lg font-bold">
+                          $ {{ cartItem.totalPrice }}
+                        </p>
                         <p
                           v-if="cartItem.id !== 1 && cartItem.id !== 5"
                           class="text-green-500 flex items-center ml-5 text-xs"
@@ -154,8 +150,10 @@ watch(
                           Ships in 3-4 weeks
                         </p>
                       </div>
-                      <div class="w-full flex mx-auto items-center justify-between pt-4 sm:pt-0">
-                        <div class="flex min-h-full items-center">
+                      <div
+                        class="w-full flex flex-0 mx-auto items-center justify-between pt-4 sm:pt-0"
+                      >
+                        <div class="flex items-center">
                           <div class="border rounded-lg pl-2 pr-1 py-1 relative">
                             <input
                               class="w-[20px] absolute left-3 z-0 bg-white"
@@ -185,7 +183,7 @@ watch(
                           <div v-if="cartItem.removeItem">Removing item...</div>
                           <button
                             v-else
-                            @click="removeItem(cartItem)"
+                            @click="(event) => removeCartItem(cartItem, event.target)"
                             class="text-red-500 hover:text-red-700"
                           >
                             Remove
@@ -200,7 +198,9 @@ watch(
           </div>
         </div>
 
-        <div class="text-slate-600 bg-white p-8 rounded-lg shadow-md relative sm:sitcky">
+        <div
+          class="col-span-2 sm:col-span-1 text-slate-600 bg-white p-8 rounded-lg shadow-md relative sm:sitcky"
+        >
           <h2 class="text-gray-700 text-lg font-semibold mb-4">Order summary</h2>
           <div class="flex justify-between mb-2">
             <span>Subtotal</span>
@@ -224,6 +224,6 @@ watch(
       </div>
     </div>
 
-    <NoItemFound v-else name="cart" />
+    <NoItemFound v-if="totalItems == 0" name="cart" />
   </div>
 </template>

@@ -1,6 +1,5 @@
 // store.js
 import { defineStore } from 'pinia';
-import axios from 'axios';
 import { fetchCategories, fetchSingleProduct, fetchProducts, fetchFavourites } from '../api/api';
 import { calculateSubTotalAmount, calculateTaxAmount, calculateCartTotal, parseObjectToArray } from '../utils/utils'
 
@@ -258,7 +257,7 @@ export const useAppStore = defineStore('appStore', {
       clearInterval(this.toast.interval);
       this.toast.interval = null;
     },
-    addToCart(item, eventTarget = null) {
+    addToCart(item) {
       const newCartItems = { ...this.cart.cartItems };
       if (newCartItems[item.id]) {
         newCartItems[item.id].quantity += 1;
@@ -273,23 +272,9 @@ export const useAppStore = defineStore('appStore', {
           removeItem: false,
         };
       }
-      // const cartTotalItems = Object.keys(newCartItems).length;
-      // const cartSubTotalAmount = calculateSubTotalAmount(newCartItems);
-      // const cartTaxAmount = calculateTaxAmount(newCartItems, this.taxRate);
-      // const cartTotalAmount = calculateCartTotal(newCartItems, this.taxRate, this.shippingRate);
 
       this.updateCart(newCartItems, 'Product added to cart!');
 
-      // this.cart = { 
-      //   ...this.cart,
-      //   cartItems: newCartItems,
-      //   totalItems: cartTotalItems,
-      //   subTotalAmount: cartSubTotalAmount,
-      //   taxAmount: cartTaxAmount,
-      //   totalAmount: cartTotalAmount,
-      // };
-
-      // console.log(this.cart)
     },
     updateCart(newCartItems, toastMessage=''){
       const cartTotalItems = Object.keys(newCartItems).length;
@@ -297,7 +282,7 @@ export const useAppStore = defineStore('appStore', {
       const cartTaxAmount = calculateTaxAmount(newCartItems, this.taxRate);
       const cartTotalAmount = calculateCartTotal(newCartItems, this.taxRate, this.shippingRate);
 
-      if(toastMessage){this.showToast('Product added to cart!');}
+      if(toastMessage){this.showToast(toastMessage);}
 
       this.cart = { 
         ...this.cart,
@@ -308,9 +293,48 @@ export const useAppStore = defineStore('appStore', {
         totalAmount: cartTotalAmount,
       };
     },
+    removeCartItem(item, el){
+      if (el.hasAttribute('disabled')) return;
+    
+      this.disableElement(el);
+      
+      const findItemInCart = this.isInCartItems(item.id, this.cart.cartItems)
+
+      if (findItemInCart) {
+        const cartItems = Object.values(parseObjectToArray(this.cart.cartItems))
+        const index = cartItems.indexOf(findItemInCart)
+        cartItems[index].removeItem = true;
+
+        setTimeout(() => {
+          const newCartItems = [...cartItems]
+          newCartItems.splice(newCartItems.indexOf(item), 1);
+          this.disableElement(el, false);
+
+          this.updateCart(newCartItems, 'Item removed successfully!')
+
+          if (cartItems[index]) {
+            cartItems[index].removeItem = false;
+          }
+        }, 2000)
+      }
+    },
     isInCartItems: (id, object) => {
       const parsedObject = parseObjectToArray(object);
       return Object.values(parsedObject).find(item => item.id === id) || false;
+    },
+    disableElement(el, boolean = true){
+      if(!boolean){
+        el.removeAttribute('disabled');
+        el.classList.remove(this.disabledClass)
+        el.classList.remove(this.cursorNotAllowed)
+        el.classList.remove(this.cursorPointerClass)
+        return;
+      }
+
+      el.setAttribute('disabled', true);
+      el.classList.toggle(this.disabledClass)
+      el.classList.toggle(this.cursorNotAllowed)
+      el.classList.toggle(this.cursorPointerClass)
     },
   },
   getters: {

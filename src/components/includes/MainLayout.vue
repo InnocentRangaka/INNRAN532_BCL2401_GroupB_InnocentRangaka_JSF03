@@ -2,7 +2,7 @@
 import { onMounted, ref, computed, watch } from 'vue'
 import { useAppStore } from '../../stores/appStore'
 import SearchFilterSort from './SearchFilterSort.vue'
-import Footer from './Footer.vue'
+import Footer from './MainFooter.vue'
 import Header from './StickyHeader.vue'
 import SuccessToast from './SuccessToast.vue'
 
@@ -10,8 +10,7 @@ const appStore = useAppStore()
 const { fetchCategories, error } = appStore
 
 const currentLocation = computed(() => appStore.currentLocation),
-  showTopPart = ref(true),
-  showSearchFilterSort = ref(true)
+  showTopPart = ref(true)
 const isTopPartShown = () => {
   const isAuthPage = appStore.pages.authPages.includes(appStore.pageName)
   const cartPages = appStore.pages.cartPages.includes(appStore.pageName)

@@ -82,3 +82,45 @@ function getNewCartItems(cartItems, productId, quantity) {
 
     return newCartItems;
 }
+
+/**
+ * Create a unique array, removing duplicates and empty values.
+ * @param {Array} array - The array to process.
+ * @returns {Array} The unique array.
+ */
+export const createUniqueArray = (array) => {
+    return Object.values(array).filter((item, index, self) => self.indexOf(item) === index); // Remove duplicates
+}
+
+/**
+ * Filter an array of objects to contain only unique objects by a specified key.
+ * @param {Array<Object>} array - The array of objects.
+ * @param {string} key - The key to check for uniqueness.
+ * @returns {Array<Object>} The array of unique objects.
+ */
+export function uniqueObjects(array, key) {
+    const seen = new Set();
+    return array.filter(item => {
+        const value = item[key];
+        if (seen.has(value)) {
+            return false;
+        }
+        seen.add(value);
+        return true;
+    });
+}
+
+/**
+ * Parse an object or JSON string into an array.
+ * @param {Object|string} object - The object or JSON string to parse.
+ * @returns {Object} The parsed object.
+ */
+export function parseObjectToArray(object) {
+    let parsedObject = {};
+    try {
+        parsedObject = { ...JSON.parse(object) };
+    } catch (error) {
+        parsedObject = { ...object };
+    }
+    return parsedObject;
+}

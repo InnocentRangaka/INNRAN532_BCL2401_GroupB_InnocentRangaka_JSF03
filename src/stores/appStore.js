@@ -2,7 +2,7 @@
 import { defineStore } from 'pinia';
 import axios from 'axios';
 import { fetchCategories, fetchSingleProduct, fetchProducts, fetchFavourites } from '../api/api';
-import { calculateSubTotalAmount, calculateTaxAmount, calculateCartTotal } from '../utils/utils'
+import { calculateSubTotalAmount, calculateTaxAmount, calculateCartTotal, parseObjectToArray } from '../utils/utils'
 
 export const useAppStore = defineStore('appStore', {
   state: () => ({
@@ -323,6 +323,10 @@ export const useAppStore = defineStore('appStore', {
     // getCart: (state) => {
     //   return state.products.filter((product) => state.cart[product.id]);
     // },
+    isInCartItems: (id, object) => {
+      const parsedObject = parseObjectToArray(object);
+      return Object.values(parsedObject).find(item => item.id === id) || false;
+    },
     getCartTotal: (state) => {
       return state.cart.totalItems;
     },

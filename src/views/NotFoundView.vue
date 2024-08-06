@@ -27,7 +27,7 @@ const goHome = () => {
       <div class="mt-10 flex items-center justify-center gap-4">
         <button
           @click="goBack"
-          class="cursor-pointer rounded-md hover:text-cyan-900 hover:underline font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-600"
+          class="cursor-pointer rounded-md text-gray-900 hover:text-cyan-900 hover:underline font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-600"
         >
           <span class="flex h-full items-center text-left">
             <svg
@@ -45,7 +45,7 @@ const goHome = () => {
         <span class="min-h-4 border-r border-gray-400 tracking-wider"></span>
         <button
           @click="goHome"
-          class="cursor-pointer rounded-md hover:text-cyan-900 hover:underline py-2.5 font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-600"
+          class="cursor-pointer rounded-md text-gray-900 hover:text-cyan-900 hover:underline py-2.5 font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-600"
         >
           <span class="flex h-full items-center text-left">
             <span class="mb-[0.12rem] font-semibold">Continue shopping</span>

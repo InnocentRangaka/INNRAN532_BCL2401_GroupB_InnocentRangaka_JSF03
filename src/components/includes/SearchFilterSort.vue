@@ -1,5 +1,5 @@
 <script setup>
-import { watch, ref, computed, onMounted } from 'vue'
+import { watch, ref, computed } from 'vue'
 import { useAppStore } from '../../stores/appStore'
 import { useRouter } from 'vue-router'
 

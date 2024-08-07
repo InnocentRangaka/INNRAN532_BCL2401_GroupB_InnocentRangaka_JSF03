@@ -1,30 +1,53 @@
 <script setup>
-import { watchEffect, ref, onMounted, nextTick } from 'vue'
+import { watchEffect, ref, onMounted } from 'vue'
 import { useAppStore } from '../../stores/appStore'
 import RatingStars from '../icons/RatingStars.vue'
 import TopBackLink from '../includes/TopBackLink.vue'
-import { useRoute, useRouter } from 'vue-router'
 
+/**
+ * Application store for managing global state, including product details, cart, and wishlist.
+ * @type {ReturnType<typeof useAppStore>}
+ */
 const appStore = useAppStore()
-const route = useRoute()
-const router = useRouter()
 
-const { isInWishList, addToFavourites, addToCart, viewProduct, cart, currency, loading } = appStore
+/**
+ * Methods and reactive variables from the application store.
+ * @typedef {Object} AppStoreMethods
+ * @property {Function} isInWishList - Checks if a product is in the wishlist.
+ * @property {Function} addToFavourites - Adds a product to the wishlist.
+ * @property {Function} addToCart - Adds a product to the cart.
+ * @property {Function} viewProduct - Fetches the details of the product to view.
+ * @property {Object} cart - Contains cart-related data.
+ * @property {string} currency - Current currency symbol.
+ * @property {Object} loading - Contains loading states for various components.
+ */
 
+/**
+ * Destructured methods and variables from the app store.
+ * @type {AppStoreMethods}
+ */
+const { isInWishList, addToFavourites, addToCart, cart, currency } = appStore
+
+/**
+ * Reactive reference to store the current product details.
+ * @type {Ref<Object>}
+ */
 let product = ref(appStore.viewProduct)
+
+/**
+ * Reactive reference to store the current currency.
+ * @type {Ref<string>}
+ */
 let currentCurrency = ref(appStore.currency)
-let productsLoading = ref(loading.products)
 
-product.value = appStore.viewProduct
-
+// Fetch product details and update the reference on component mount
 onMounted(async () => {
   setTimeout(() => {
     product.value = appStore.viewProduct
-    // console.log(product, appStore.viewProduct)
-    // appStore.setProductsLoading(false)
   }, 1000)
 })
 
+// Watch for changes in the product and currency, and update the references
 watchEffect(() => {
   product.value = appStore.viewProduct
   currentCurrency.value = appStore.currentCurrency

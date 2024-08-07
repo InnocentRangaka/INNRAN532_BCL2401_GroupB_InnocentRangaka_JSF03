@@ -2,25 +2,27 @@
 import { watchEffect, ref, onMounted } from 'vue'
 import { useAppStore } from '../../stores/appStore'
 import RatingStars from '../icons/RatingStars.vue'
-// import { useRoute, useRouter } from 'vue-router'
 
+/**
+ * Application store for managing global state, including products, cart, and wishlist.
+ * @type {ReturnType<typeof useAppStore>}
+ */
 const appStore = useAppStore()
-// const route = useRoute()
-// const router = useRouter()
 
 const { isInWishList, addToCart, addToFavourites } = appStore
 
+/**
+ * Reactive reference to store the current products.
+ * @type {Ref<Array>}
+ */
 let currentProducts = ref(appStore.products)
 
-// Fetch products on mount
+// Fetch products on component mount
 onMounted(async () => {
   currentProducts.value = appStore.products
-  setTimeout(() => {
-    // appStore.setProductsLoading(false)
-    // console.log(currentProducts.value, getProducts, appStore.products)
-  }, 1000)
 })
 
+// Watch for changes in products and update the reference
 watchEffect(() => {
   currentProducts.value = appStore.products
   appStore.getProducts

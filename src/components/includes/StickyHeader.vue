@@ -8,17 +8,59 @@ import HeartIcon from '../icons/HeartIcon.vue'
 import HamburgerIcon from '../icons/HamburgerIcon.vue'
 import UserIcon from '../icons/UserIcon.vue'
 
+/**
+ * Vue Router instance used for navigation.
+ * @type {ReturnType<typeof useRouter>}
+ */
 const router = useRouter()
+
+/**
+ * Application store for managing global state.
+ * @type {ReturnType<typeof useAppStore>}
+ */
 const appStore = useAppStore()
 
+/**
+ * Function to fetch categories from the app store.
+ * @type {Function}
+ */
 const { fetchCategories } = appStore
 
+/**
+ * Reactive reference for storing categories.
+ * @type {Ref<Array<string>>}
+ */
 const categories = ref([])
+
+/**
+ * Reactive reference to toggle mobile menu visibility.
+ * @type {Ref<boolean>}
+ */
 const mobileMenuOpen = ref(false)
+
+/**
+ * Computed property for getting the total number of items in the cart.
+ * @type {ComputedRef<number>}
+ */
 const cartTotalItems = computed(() => appStore.cart.totalItems)
+
+/**
+ * Computed property for getting the wish list items.
+ * @type {ComputedRef<Array<Object>>}
+ */
 const wishListItems = computed(() => appStore.wishList)
 
+/**
+ * Computed property for getting the current route name.
+ * @type {ComputedRef<string>}
+ */
 let pageName = computed(() => router.currentRoute.value.name)
+
+/**
+ * Function to check if a given page is the active page.
+ * @param {string} name - The name of the page to check.
+ * @returns {boolean} - Returns `true` if the page is active, `false` otherwise.
+ */
 const isActivePage = (name) => {
   const routeName = pageName?.value
   let page = routeName?.toLowerCase()
@@ -29,21 +71,43 @@ const isActivePage = (name) => {
   return page == name
 }
 
+/**
+ * Toggles the mobile menu visibility.
+ * @function
+ */
 const toggleMobileMenu = () => {
   mobileMenuOpen.value = !mobileMenuOpen.value
 }
 
+/**
+ * Function to clean and format the category name for the menu.
+ * @param {string} category - The category name to format.
+ * @returns {string} - The formatted category name.
+ */
 const menuName = (category) => {
   const cleanCategory = category ? category.toLowerCase() : category
   return `${cleanCategory.replace("'s clothing", '')}`
 }
 
+/**
+ * Capitalizes the first letter of the given name.
+ * @param {string} name - The name to capitalize.
+ * @returns {string} - The capitalized name.
+ */
 const capitalizeMenuName = (name) => name.charAt(0).toUpperCase() + name.slice(1)
 
+/**
+ * Navigates to the specified path using Vue Router.
+ * @param {string} path - The path to navigate to.
+ */
 const navigateTo = (path) => {
   router.push(path)
 }
 
+/**
+ * Lifecycle hook to fetch categories on component mount and update the store.
+ * @function
+ */
 onMounted(async () => {
   await fetchCategories(appStore)
   categories.value = appStore?.categories

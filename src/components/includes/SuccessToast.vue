@@ -1,24 +1,61 @@
 <script setup>
-import { ref, onMounted, onUnmounted, computed, watch } from 'vue'
+import { onMounted, onUnmounted, computed, watch } from 'vue'
 import { useAppStore } from '../../stores/appStore' // Make sure to correctly import your store
+
+/**
+ * Application store for managing global state, including toast notifications.
+ * @type {ReturnType<typeof useAppStore>}
+ */
 const appStore = useAppStore()
 
-const { closeToast, showToast } = appStore
-const toast = computed(() => appStore.toast)
+/**
+ * Function to close the toast notification.
+ * @type {Function}
+ */
+const { closeToast } = appStore
+/**
+ * Computed property to determine if the toast notification is visible.
+ * @type {ComputedRef<boolean>}
+ */
 const visible = computed(() => appStore.toast.visible)
+
+/**
+ * Computed property for getting the message of the toast notification.
+ * @type {ComputedRef<string>}
+ */
 const message = computed(() => appStore.toast.message)
+
+/**
+ * Computed property for getting the progress percentage of the toast notification.
+ * @type {ComputedRef<number>}
+ */
 const percent = computed(() => appStore.toast.percent)
 
+/**
+ * Lifecycle hook called when the component is mounted.
+ * Shows the toast notification if it is visible.
+ * @function
+ */
 onMounted(() => {
   if (visible.value) {
-    // showToast(message)
+    // showToast(message) // Uncomment this line if you want to show the toast on mount
   }
 })
 
+/**
+ * Lifecycle hook called when the component is unmounted.
+ * Closes the toast notification when the component is destroyed.
+ * @function
+ */
 onUnmounted(() => {
   closeToast()
 })
 
+/**
+ * Watcher to monitor changes in the visibility of the toast notification.
+ * Updates toast properties based on visibility.
+ * @function
+ */
 watch(visible, () => {
   // visible.value = toast.value.visible
   // message.value = toast.value.message

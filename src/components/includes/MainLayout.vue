@@ -10,18 +10,18 @@ const appStore = useAppStore()
 const { fetchCategories, error } = appStore
 
 const currentLocation = computed(() => appStore.currentLocation),
-  showTopPart = ref(true)
+  showStaticPart = ref(true)
 const isTopPartShown = () => {
   const isAuthPage = appStore.pages.authPages.includes(appStore.pageName)
   const cartPages = appStore.pages.cartPages.includes(appStore.pageName)
 
-  showTopPart.value = !(isAuthPage || cartPages)
+  showStaticPart.value = !(isAuthPage || cartPages)
 }
 
 const handleShowSearchFilterSort = (pathName) => {
   const isNotProductShow =
     pathName.startsWith('/wishlist') || pathName.startsWith('/auth') || pathName.startsWith('/cart')
-  showTopPart.value = !isNotProductShow
+  showStaticPart.value = !isNotProductShow
 }
 
 onMounted(() => {
@@ -40,12 +40,12 @@ watch(currentLocation, () => {
 <template>
   <div>
     <!-- Header -->
-    <Header v-if="showTopPart" />
+    <Header v-if="showStaticPart" />
 
     <main>
       <div class="page-content">
         <!-- Search Filter Sort -->
-        <SearchFilterSort v-show="showTopPart" />
+        <SearchFilterSort v-show="showStaticPart" />
 
         <!-- Error -->
         <div v-if="error" class="w-full flex justify-center">
@@ -63,6 +63,6 @@ watch(currentLocation, () => {
     <SuccessToast />
 
     <!-- Footer -->
-    <Footer />
+    <Footer v-if="showStaticPart" />
   </div>
 </template>

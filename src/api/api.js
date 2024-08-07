@@ -1,15 +1,6 @@
 import { watch, watchEffect } from 'vue';
 import { useFetch } from '../utils/useFetch';
 
-{/* <script setup> */}
-// re-fetch when props.id changes
-{/* const { data, error } = useFetch(() => `/posts/${props.id}`) */}
-// </script>
-
-const API_URL = 'https://fakestoreapi.com/products/'
-
-// src/api/Api.js
-
 /**
  * Fetches categories from the Fake Store API.
  * @returns {Promise<{response: string[], error: null} | {error: any, response: null}>} An object containing the response data or an error.
@@ -42,51 +33,51 @@ export const fetchCategories = async (app) => {
   return {data, error, fetching };
 };
   
-  /**
-   * Fetches a single product by ID from the Fake Store API.
-   * @param {number} id - The ID of the product to fetch.
-   * @returns {Promise<{response: Object, error: null} | {error: any, response: null}>} An object containing the product data or an error.
-   */
-  export const fetchSingleProduct = async (id, app) => {
-    app.setViewProduct([]);
-    app.setProductsLoading(true);
+/**
+ * Fetches a single product by ID from the Fake Store API.
+ * @param {number} id - The ID of the product to fetch.
+ * @returns {Promise<{response: Object, error: null} | {error: any, response: null}>} An object containing the product data or an error.
+ */
+export const fetchSingleProduct = async (id, app) => {
+  app.setViewProduct([]);
+  app.setProductsLoading(true);
 
-    const { data, error, fetching } = await useFetch(`/${id}`);
-    while (fetching.value) {
-      await new Promise((resolve) => setTimeout(resolve, 100));
-    }
-  
-    watchEffect(() => {
-      if (!fetching.value) {
-        if (error.value) {
-          app.setError({
-            status: error.status,
-            message: 'Data fetching failed :( , please check your network connection and reload.',
-            type: 'network/fetch',
-          })
-  
-          return;
-        }
-        
-        if (data.value) {
-          // console.log(data.value)
-          app.setViewProduct(data.value);
-          app.setProductsLoading(false);
-          setTimeout(() => {
-            app.setPageLoading(false);
-          }, 1000);
-        }
+  const { data, error, fetching } = await useFetch(`/${id}`);
+  while (fetching.value) {
+    await new Promise((resolve) => setTimeout(resolve, 100));
+  }
+
+  watchEffect(() => {
+    if (!fetching.value) {
+      if (error.value) {
+        app.setError({
+          status: error.status,
+          message: 'Data fetching failed :( , please check your network connection and reload.',
+          type: 'network/fetch',
+        })
+
+        return;
       }
-    })
+      
+      if (data.value) {
+        // console.log(data.value)
+        app.setViewProduct(data.value);
+        app.setProductsLoading(false);
+        setTimeout(() => {
+          app.setPageLoading(false);
+        }, 1000);
+      }
+    }
+  })
+
+  return {data, error, fetching };
+};
   
-    return {data, error, fetching };
-  };
-  
-  /**
-   * Fetches products from the Fake Store API based on the selected category or all products if no category is selected.
-   * @param {Object} app - The application state object.
-   * @returns {Promise<void>} Updates the application state with fetched products and handles loading state.
-   */
+/**
+ * Fetches products from the Fake Store API based on the selected category or all products if no category is selected.
+ * @param {Object} app - The application state object.
+ * @returns {Promise<void>} Updates the application state with fetched products and handles loading state.
+ */
 export const fetchProducts = async (app) => {
   app.setProductsLoading(true);
 
@@ -119,6 +110,14 @@ export const fetchProducts = async (app) => {
 };
 
   
+/**
+ * Fetches favourite products by their IDs, updates the app's state with the fetched data,
+ * and handles loading and error states.
+ *
+ * @param {Object} objectArray - An object containing the product IDs to fetch.
+ * @param {Object} app - The app instance with methods to update the app's state.
+ * @returns {Promise<Object>} A promise that resolves to an object containing the list of fetched products and a boolean indicating if an error occurred.
+ */
 export const fetchFavourites = async (objectArray, app) => {
   app.setProductsLoading(true);
 
@@ -167,3 +166,4 @@ export const fetchFavourites = async (objectArray, app) => {
 
   return { list, error: errorOccurred };
 };
+

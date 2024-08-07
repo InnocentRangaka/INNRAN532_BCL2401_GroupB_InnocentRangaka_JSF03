@@ -6,47 +6,132 @@ import { useRouter } from 'vue-router'
 // Using vue-router hooks
 const router = useRouter()
 
+/**
+ * The application store instance used for accessing global state.
+ * @type {ReturnType<typeof useAppStore>}
+ */
 const appStore = useAppStore()
 
-// const app = computed(() => appStore.state)
+/**
+ * Computed property for accessing the current location from the app store.
+ * @type {ComputedRef<Location>}
+ */
 const currentLocation = computed(() => appStore.currentLocation)
+
+/**
+ * Computed property for accessing the current query parameters from the app store.
+ * @type {ComputedRef<{ filter?: string, sort?: string, search?: string }>}
+ */
 const currentQuery = computed(() => appStore.currentLocation.query)
-const searchTerm = computed(() => appStore.searchTerm)
+
+/**
+ * Computed property for accessing the current search term from the app store.
+ * @type {ComputedRef<string>}
+ */
+const inputSearchTerm = computed(() => appStore.searchTerm)
+const searchTerm = ref(inputSearchTerm.value)
+
+/**
+ * Computed property for accessing the current filter item from the app store.
+ * @type {ComputedRef<string>}
+ */
 const filterItem = computed(() => appStore.getFilterItem)
+
+/**
+ * Computed property for checking if the dropdown is open.
+ * @type {ComputedRef<boolean>}
+ */
 const dropdownOpen = computed(() => appStore.dropdownOpen)
+
+/**
+ * Computed property for accessing the current sorting option from the app store.
+ * @type {ComputedRef<string>}
+ */
 const sorting = computed(() => appStore.sorting)
+
+/**
+ * Computed property for accessing the categories from the app store.
+ * @type {ComputedRef<string[]>}
+ */
 const categories = computed(() => appStore.getCategories)
 
-// console.log(currentLocation.value)
-let currentSearchTerm = ref(searchTerm.value),
-  currentFilterTerm = ref(filterItem.value),
-  currentSortTerm = ref(sorting.value),
-  showSearchFilterSort = ref(true)
+// Reactive references
+/**
+ * Reactive reference for the current search term.
+ * @type {Ref<string>}
+ */
+let currentSearchTerm = ref(searchTerm.value)
+
+/**
+ * Reactive reference for the current filter term.
+ * @type {Ref<string>}
+ */
+let currentFilterTerm = ref(filterItem.value)
+
+/**
+ * Reactive reference for the current sort term.
+ * @type {Ref<string>}
+ */
+let currentSortTerm = ref(sorting.value)
+
+/**
+ * Reactive reference for controlling the visibility of search, filter, and sort controls.
+ * @type {Ref<boolean>}
+ */
+let showSearchFilterSort = ref(true)
+
+/**
+ * Toggles the visibility of the filter dropdown menu.
+ */
 const toggleFilterDropdown = () => {
   appStore.dropdownOpen = !dropdownOpen.value
 }
 
+/**
+ * Sets the filter item and optionally updates the URL.
+ * @param {string} item - The filter item to set.
+ * @param {boolean} [clicked=true] - Whether the filter item was clicked.
+ */
 const setFilterItem = (item, clicked = true) => {
   appStore.setFilterItem(item)
   if (clicked || item === '') updateURL()
   appStore.dropdownOpen = false
 }
 
+/**
+ * Sets the search term and optionally updates the URL.
+ * @param {string} term - The search term to set.
+ * @param {boolean} [clicked=false] - Whether the search term was clicked.
+ */
 const searchProducts = (term, clicked = false) => {
   appStore.setSearchTerm(term)
   if (clicked || term === '') updateURL()
+  appStore.searchProducts()
 }
 
+/**
+ * Sets the sorting option and optionally updates the URL.
+ * @param {string} sort - The sorting option to set.
+ * @param {boolean} [clicked=true] - Whether the sorting option was clicked.
+ */
 const sortProducts = (sort, clicked = true) => {
   appStore.setSorting(sort)
   appStore.sortProducts()
   if (clicked || sort === '') updateURL()
 }
 
+/**
+ * Capitalizes the first letter of each word in a string.
+ * @param {string} str - The string to capitalize.
+ * @returns {string|null} - The capitalized string, or null if input is invalid.
+ */
 const capitalizeFirstLetters = (str) => {
   return str ? str.toString().replace(/(?:^|\s)\S/g, (match) => match.toUpperCase()) : null
 }
 
+/**
+ * Handles query parameters from the URL and updates reactive references and app store.
+ */
 const handleSearchParams = () => {
   let params = new URLSearchParams(window.location.search)
   let query = new URLSearchParams(window.location.query)
@@ -62,7 +147,6 @@ const handleSearchParams = () => {
   if (filteringTerm) {
     currentFilterTerm.value = filteringTerm
     setFilterItem(filteringTerm, false)
-    // console.log('filteringTerm', filteringTerm, currentFilterTerm.value)
   }
 
   const searchingTerm =
@@ -71,7 +155,8 @@ const handleSearchParams = () => {
   if (searchingTerm) {
     currentSearchTerm.value = searchingTerm
     searchProducts(searchingTerm, false)
-    // console.log('searchingTerm', searchingTerm, currentFilterTerm.value)
+  } else {
+    searchTerm.value = searchingTerm
   }
 
   const sortingTerm =
@@ -79,10 +164,12 @@ const handleSearchParams = () => {
   if (sortingTerm) {
     currentSortTerm.value = sortingTerm
     sortProducts(sortingTerm, false)
-    // console.log(sort, sortingTerm, currentSortTerm.value)
   }
 }
 
+/**
+ * Updates the URL with the current search, filter, and sort parameters.
+ */
 const updateURL = () => {
   let params = new URLSearchParams()
   if (filterItem.value !== 'All categories') params.set('filter', filterItem.value)
@@ -94,14 +181,19 @@ const updateURL = () => {
   router.replace({ query: Object.fromEntries(params.entries()) })
 }
 
-onMounted(handleSearchParams)
-
+/**
+ * Determines whether to show search, filter, and sort controls based on the path name.
+ * @param {string} pathName - The current path name.
+ */
 const handleShowSearchFilterSort = (pathName) => {
   const isNotProductShow =
     pathName.startsWith('/wishlist') || pathName.startsWith('/auth') || pathName.startsWith('/cart')
   showSearchFilterSort.value = !isNotProductShow
 }
 
+/**
+ * Watches for changes in the current location and updates search, filter, and sort parameters.
+ */
 watch(currentLocation, async () => {
   handleSearchParams()
   handleShowSearchFilterSort(currentLocation.value.path)

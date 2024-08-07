@@ -27,6 +27,7 @@ SwiftCart is an e-commerce web application built with Vue.js 3 and Pinia. It all
 
 - Vue.js 3
 - Pinia (state management)
+- Pinia Plugin Persistedstate (persistant storage management)
 - Vue Router (routing)
 - Tailwind CSS (styling)
 - Axios (HTTP client)

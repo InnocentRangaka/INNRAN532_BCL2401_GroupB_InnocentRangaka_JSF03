@@ -2,27 +2,63 @@
 import { computed, onMounted, ref } from 'vue'
 import { useAppStore } from '../../stores/appStore'
 
+/**
+ * The application store instance used for accessing global state.
+ * @type {ReturnType<typeof useAppStore>}
+ */
 const appStore = useAppStore()
+
+/**
+ * Computed property for accessing categories from the app store.
+ * @type {ComputedRef<string[]>}
+ */
 const categories = computed(() => appStore.categories)
+
+/**
+ * Reactive reference for the current page name from the app store.
+ * @type {Ref<string>}
+ */
 const pageName = ref(appStore.pageName)
 
+/**
+ * Lifecycle hook that runs when the component is mounted.
+ */
 onMounted(() => {})
 
+/**
+ * Determines whether the footer should be shown based on the current page name.
+ * @param {string} pageName - The name of the current page.
+ * @returns {boolean} - Whether the footer should be displayed.
+ */
 const isShowing = (pageName) => {
-  const authPages = appStore.pages.authPages,
-    cartPages = appStore.pages.cartPages,
-    isIndexed = authPages.includes(pageName) || cartPages.includes(pageName)
+  const authPages = appStore.pages.authPages
+  const cartPages = appStore.pages.cartPages
+  const isIndexed = authPages.includes(pageName) || cartPages.includes(pageName)
   return !isIndexed
 }
 
+/**
+ * Gets the current year.
+ * @returns {number} - The current year.
+ */
 const getThisYear = () => {
   return new Date().getFullYear()
 }
 
+/**
+ * Capitalizes the menu name by replacing hyphens with spaces and capitalizing the first letter of each word.
+ * @param {string} menuName - The menu name to be capitalized.
+ * @returns {string} - The capitalized menu name.
+ */
 const capitalizeMenuName = (menuName) => {
   return menuName.replace(/-/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase())
 }
 
+/**
+ * Formats the category name for the menu by removing specific substrings and converting to lowercase.
+ * @param {string} category - The category name to be formatted.
+ * @returns {string} - The formatted menu name.
+ */
 const menuName = (category) => {
   const cleanCategory = category ? category.toLowerCase() : category
   return `${cleanCategory.replace("'s clothing", '')}`
@@ -30,11 +66,14 @@ const menuName = (category) => {
 </script>
 
 <template>
+  <!-- Footer section -->
   <footer v-if="isShowing(pageName)" class="bg-white py-8 bottom-0 left-0 right-0 mt-auto">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <!-- Footer columns layout -->
       <div
         class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 sm:grid sm:grid-cols-2 lg:grid-cols-6 gap-4 justify-between"
       >
+        <!-- Categories section -->
         <div class="flex flex-col space-y-2">
           <h3 class="text-sm font-bold text-gray-900">Categories</h3>
           <a href="/" class="text-sm text-gray-700 md:hover:text-blue-700">All</a>
@@ -47,6 +86,7 @@ const menuName = (category) => {
             {{ capitalizeMenuName(category) }}
           </a>
         </div>
+        <!-- Support section -->
         <div class="flex flex-col space-y-2 mt-6 md:mt-0">
           <h3 class="text-sm font-bold text-gray-900">Support</h3>
           <a href="#/" class="text-sm text-gray-700 md:hover:text-blue-700">Pricing</a>
@@ -54,6 +94,7 @@ const menuName = (category) => {
           <a href="#/" class="text-sm text-gray-700 md:hover:text-blue-700">Guides</a>
           <a href="#/" class="text-sm text-gray-700 md:hover:text-blue-700">API Status</a>
         </div>
+        <!-- Company section -->
         <div class="flex flex-col space-y-2 mt-6 md:mt-0">
           <h3 class="text-sm font-bold text-gray-900">Company</h3>
           <a href="#/" class="text-sm text-gray-700 md:hover:text-blue-700">About</a>
@@ -62,12 +103,14 @@ const menuName = (category) => {
           <a href="#/" class="text-sm text-gray-700 md:hover:text-blue-700">Press</a>
           <a href="#/" class="text-sm text-gray-700 md:hover:text-blue-700">Partners</a>
         </div>
+        <!-- Legal section -->
         <div class="flex flex-col space-y-2 mt-6 md:mt-0">
           <h3 class="text-sm font-bold text-gray-900">Legal</h3>
           <a href="#/" class="text-sm text-gray-700 md:hover:text-blue-700">Claim</a>
           <a href="#/" class="text-sm text-gray-700 md:hover:text-blue-700">Privacy</a>
           <a href="#/" class="text-sm text-gray-700 md:hover:text-blue-700">Terms</a>
         </div>
+        <!-- Newsletter subscription section -->
         <div class="flex flex-col space-y-2 mt-6 md:mt-0 md:col-span-2">
           <h3 class="text-sm font-bold text-gray-900">Subscribe to our newsletter</h3>
           <p class="text-sm text-gray-700">
@@ -86,10 +129,12 @@ const menuName = (category) => {
         </div>
       </div>
 
+      <!-- Footer bottom section -->
       <div class="mt-8 border-t pt-8 flex justify-between items-center">
         <p class="text-sm text-gray-700">
           &copy; {{ getThisYear() }} SwiftCart, Inc. All rights reserved.
         </p>
+        <!-- Social media links -->
         <div class="flex space-x-4">
           <div class="flex space-x-4">
             <a href="#/" class="text-gray-400 hover:text-gray-700">

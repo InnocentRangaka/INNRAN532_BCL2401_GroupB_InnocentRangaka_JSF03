@@ -1,4 +1,8 @@
 <script setup>
+/**
+ * Setup script for the main layout component.
+ * Handles page structure, loading state, and dynamic component visibility.
+ */
 import { onMounted, ref, computed, watch } from 'vue'
 import { useAppStore } from '../../stores/appStore'
 import SearchFilterSort from './SearchFilterSort.vue'
@@ -10,7 +14,13 @@ const appStore = useAppStore()
 const { fetchCategories, error } = appStore
 
 const currentLocation = computed(() => appStore.currentLocation),
-  showStaticPart = ref(true)
+  showStaticPart = ref(true),
+  showSearchFilterSort = ref(true)
+
+/**
+ * Determines whether to show the static part of the layout based on the current page.
+ * @returns {void}
+ */
 const isTopPartShown = () => {
   const isAuthPage = appStore.pages.authPages.includes(appStore.pageName)
   const cartPages = appStore.pages.cartPages.includes(appStore.pageName)
@@ -18,21 +28,32 @@ const isTopPartShown = () => {
   showStaticPart.value = !(isAuthPage || cartPages)
 }
 
+/**
+ * Handles the visibility of the search filter sort component based on the given path name.
+ * @param {string} pathName - The current path name.
+ * @returns {void}
+ */
 const handleShowSearchFilterSort = (pathName) => {
-  const isNotProductShow =
-    pathName.startsWith('/wishlist') || pathName.startsWith('/auth') || pathName.startsWith('/cart')
+  const isNotProductShow = pathName.startsWith('/auth') || pathName.startsWith('/cart')
   showStaticPart.value = !isNotProductShow
 }
 
+/**
+ * Lifecycle hook to fetch categories and set initial component visibility.
+ * @returns {void}
+ */
 onMounted(() => {
   isTopPartShown()
-  //   fetchProducts()
   fetchCategories()
 })
 
+/**
+ * Watcher for changes in the current location to update component visibility.
+ * @param {Object} newValue - The new value of the watched property.
+ * @returns {void}
+ */
 watch(currentLocation, () => {
   appStore.pageName
-  // isTopPartShown()
   handleShowSearchFilterSort(currentLocation.value.path)
 })
 </script>
@@ -45,7 +66,7 @@ watch(currentLocation, () => {
     <main>
       <div class="page-content">
         <!-- Search Filter Sort -->
-        <SearchFilterSort v-show="showStaticPart" />
+        <SearchFilterSort v-show="showSearchFilterSort" />
 
         <!-- Error -->
         <div v-if="error" class="w-full flex justify-center">

@@ -1,4 +1,15 @@
-<script setup></script>
+<script setup>
+/**
+ * Shopping Cart Icon Component
+ *
+ * This component renders an SVG icon representing a shopping cart.
+ * It can be used in various parts of the application to indicate
+ * shopping-related actions such as viewing the cart or adding items to the cart.
+ *
+ * @UsageExample
+ * <CartIcon />
+ */
+</script>
 
 <template>
   <svg
